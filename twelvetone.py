@@ -205,7 +205,17 @@ class twelve_tone_matrix(tone_row):
         RI0 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
         RI5 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
         """
-        pass
+        if transposition.startswith("T"):
+            return self.transpose_row(self.primary_row, int(transposition[1:]))
+
+        if transposition.startswith("RI"):
+            return self.transpose_row(self.pr_retrograde_inversion, int(transposition[2:]))
+        
+        if transposition.startswith("R"):
+            return self.transpose_row(self.primary_row_retrograde, int(transposition[1:]))
+        
+        if transposition.startswith("I"):
+            return self.transpose_row(self.primary_row_inversion, int(transposition[1:]))
 
 if __name__ == "__main__":
     row = twelve_tone_matrix()
@@ -217,4 +227,4 @@ if __name__ == "__main__":
     for i in row.matrix:
         print(i)
     trans_row = row.transpose_row(row.primary_row, 6)
-    print(trans_row)
+    print(row.find_transposition("I0"))
