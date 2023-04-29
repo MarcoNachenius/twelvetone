@@ -69,7 +69,7 @@ For example, the 12-tone matrix of the tone-row mentioned above will look as fol
 [4, 7, 3, 8, 9, 11, 6, 1, 0, 5, 10, 2]
 
 A notable feature of Schoenberg's 12-tone matrix is that every number spanning
-from top-left to bottom-right ([1][1], [2][2], [3][3] etc.) will always be
+from top-left to bottom-right ([0][0], [1][1], [2][2], [3][3] etc.) will always be
 identical, regardless of which tone-row is used.
 """
 
@@ -80,34 +80,40 @@ class tone_row (object): #I wanted to use numpy arrays but my versions are mixed
     
     def __init__(self, **args):
         self.__primary_row = []
-    
-    @property
-    def primary_row_inversion(self):
-        row_inversion = [self.primary_row[0]]
-        for i in range(1,12):
-            semitones = self.primary_row[i] - self.primary_row[i-1]
-            row_inversion.append(row_inversion[i-1] - semitones)
-            
-            if row_inversion[i] > 11:
-                row_inversion[i] -= 12
-            elif row_inversion[i] < 0:
-                row_inversion[i] += 12
-        
-        return row_inversion
-    
+
     @property
     def primary_row(self):
         return self.__primary_row
-    
+
     @primary_row.setter
     def primary_row(self, tone_row: list):
         self.__primary_row = tone_row
-    
+
     @property
     def random_tone_row(self):
         random_tone_row = list(range(12))
         random.shuffle(random_tone_row)
         return random_tone_row
+
+    @property
+    def primary_row_retrograde(self):
+        pr_retrograde = copy.deepcopy(self.primary_row)
+        pr_retrograde.reverse()
+        return pr_retrograde
+
+    @property
+    def primary_row_inversion(self):
+        row_inversion = [self.primary_row[0]]
+        
+        for i in range(1,12):
+            semitones = self.primary_row[i] - self.primary_row[i-1]
+            row_inversion.append(row_inversion[i-1] - semitones)
+            if row_inversion[i] > 11:
+                row_inversion[i] -= 12
+            elif row_inversion[i] < 0:
+                row_inversion[i] += 12
+                
+        return row_inversion
 
 class twelve_tone_matrix(tone_row):
     
@@ -191,4 +197,5 @@ if __name__ == "__main__":
     print("\n=======================\n" + "Tone row matrix:\n" + "=======================" )
     for i in row.matrix:
         print(i)
-    print(row.primary_row[:6])
+    #print(list(range(11, -1, -1)))
+    print(row.primary_row_retrograde)

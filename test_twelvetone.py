@@ -3,10 +3,11 @@ import unittest
 
 class test_tone_row(unittest.TestCase):
     
-    def test_primary_row_inversion(self):
+    def test_primary_row_transformations(self):
         tc_matrix = twelvetone.twelve_tone_matrix()
         tc_matrix.primary_row = [2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0]
         self.assertEqual(tc_matrix.primary_row_inversion, [2, 11, 3, 10, 9, 7, 0, 5, 6, 1, 8, 4])
+        self.assertEqual(tc_matrix.primary_row_retrograde, [0, 8, 3, 10, 11, 4, 9, 7, 6, 1, 5, 2])
     
     def test_matrix(self):
         tc_matrix = twelvetone.twelve_tone_matrix()
@@ -27,6 +28,8 @@ class test_tone_row(unittest.TestCase):
     def test_find_transposition(self):
         tc_matrix = twelvetone.twelve_tone_matrix()
         tc_matrix.primary_row = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        
+        
         self.assertEqual(tc_matrix.find_transposition("T0"), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
         self.assertEqual(tc_matrix.find_transposition("T7"), [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6])
         self.assertEqual(tc_matrix.find_transposition("I0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
