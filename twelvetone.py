@@ -112,8 +112,13 @@ class tone_row (object): #I wanted to use numpy arrays but my versions are mixed
                 row_inversion[i] -= 12
             elif row_inversion[i] < 0:
                 row_inversion[i] += 12
-                
+        
         return row_inversion
+    @property
+    def pr_retrograde_inversion(self):
+        pr_ret_inv = copy.deepcopy(self.primary_row_inversion)
+        pr_ret_inv.reverse()
+        return pr_ret_inv
 
 class twelve_tone_matrix(tone_row):
     
@@ -139,8 +144,22 @@ class twelve_tone_matrix(tone_row):
                     matrix[matrix_row][matrix_column] -= 12
                 elif matrix[matrix_row][matrix_column] < 0:
                     matrix[matrix_row][matrix_column] += 12
-
         return matrix
+    
+    def transpose_row(self, tone_row: list, semitones: int):
+        """
+        A positive number for semitones implies movement up by the specified
+        number of semitones, and vice versa.
+        """
+        transposed_row = copy.deepcopy(tone_row)
+        transposed_row = [note + semitones for note in transposed_row]
+        for i in range(12):
+            if transposed_row[i] > 11:
+                transposed_row[i] -= 12
+            elif transposed_row[i] < 0:
+                transposed_row[i] += 12
+        
+        return transposed_row
     
     def find_transposition(self, transposition: str):
         """
@@ -191,11 +210,11 @@ class twelve_tone_matrix(tone_row):
 if __name__ == "__main__":
     row = twelve_tone_matrix()
     #row.primary_row = row.random_tone_row
-    row.primary_row = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+    row.primary_row = [6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1]
     print("=======================\n" + "Random tone row:\n" + "=======================" )
     print(row.primary_row)
     print("\n=======================\n" + "Tone row matrix:\n" + "=======================" )
     for i in row.matrix:
         print(i)
-    #print(list(range(11, -1, -1)))
-    print(row.primary_row_retrograde)
+    trans_row = row.transpose_row(row.primary_row, 6)
+    print(trans_row)
