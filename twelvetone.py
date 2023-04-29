@@ -135,12 +135,60 @@ class twelve_tone_matrix(tone_row):
                     matrix[matrix_row][matrix_column] += 12
 
         return matrix
+    
+    def find_transposition(self, transposition: str):
+        """
+        Transposition of a tone row occurs when all notes are moved up or
+        down by the same amount of semitones.
+        
+        'T' refers to a specific transposition of the prime row.
+        'T0' is the prime row(first row of the matrix)
+        
+        'I' refers to a specific inversion of the prime row.
+        'I0' is the prime row(first row of the matrix)
+        
+        'R' refers to a specific retrograde(reverse order) of the prime row.
+        'R0' is the retrograde of the prime row(first row of the matrix read from right to left)
+        
+        'RI' refers to a specific retrograde of the prime row's inversion.
+        'RI0' is the retrograde of the prime row's inversion(first column of the matrix read from down to up)
+        
+        For example, consider the matrix of the tone row [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:
+        
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        [11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+        [10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+        [9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+        [8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7]
+        [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]
+        [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
+        [5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4]
+        [4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3]
+        [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2]
+        [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
+        
+        Here are some examples of how specific transpositions are transposed
+        and what their values are:
+        
+        T0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        T7 = [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]
+        I0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        I6 = [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7]
+        R0 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+        R1 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        RI0 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
+        RI5 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
+        """
+        pass
 
 if __name__ == "__main__":
     row = twelve_tone_matrix()
-    row.primary_row = row.random_tone_row
+    #row.primary_row = row.random_tone_row
+    row.primary_row = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     print("=======================\n" + "Random tone row:\n" + "=======================" )
     print(row.primary_row)
     print("\n=======================\n" + "Tone row matrix:\n" + "=======================" )
     for i in row.matrix:
         print(i)
+    print(row.primary_row[:6])
