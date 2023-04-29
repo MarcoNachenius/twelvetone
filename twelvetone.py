@@ -161,7 +161,7 @@ class twelve_tone_matrix(tone_row):
         
         return transposed_row
     
-    def find_transposition(self, transposition: str):
+    def return_transformation(self, transposition: str):
         """
         Transposition of a tone row occurs when all notes are moved up or
         down by the same amount of semitones.
@@ -217,14 +217,36 @@ class twelve_tone_matrix(tone_row):
         if transposition.startswith("I"):
             return self.transpose_row(self.primary_row_inversion, int(transposition[1:]))
 
+    def find_transformations(self, tone_row: list):
+        """
+        returns a list of transformations that apply to the primary row
+        """
+        transformations = []
+        for i in range(12):
+            if tone_row == self.transpose_row(self.primary_row, i):
+                transformations.append("T" + str(i))
+        
+            if tone_row == self.transpose_row(self.primary_row_retrograde, i):
+                transformations.append("R" + str(i))
+            
+            if tone_row == self.transpose_row(self.primary_row_inversion, i):
+                transformations.append("I" + str(i))
+            
+            if tone_row == self.transpose_row(self.pr_retrograde_inversion, i):
+                transformations.append("RI" + str(i))
+        
+        return transformations
+    
+    
+    
 if __name__ == "__main__":
     row = twelve_tone_matrix()
     #row.primary_row = row.random_tone_row
-    row.primary_row = [6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1]
+    row.primary_row = list(range(12))
     print("=======================\n" + "Random tone row:\n" + "=======================" )
     print(row.primary_row)
     print("\n=======================\n" + "Tone row matrix:\n" + "=======================" )
     for i in row.matrix:
         print(i)
     trans_row = row.transpose_row(row.primary_row, 6)
-    print(row.find_transposition("I0"))
+    print(row.find_transformations(trans_row))
