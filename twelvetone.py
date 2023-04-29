@@ -139,9 +139,8 @@ class twelve_tone_matrix(tone_row):
 if __name__ == "__main__":
     row = twelve_tone_matrix()
     row.primary_row = row.random_tone_row
-    row.primary_row = [2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0]
+    print("=======================\n" + "Random tone row:\n" + "=======================" )
     print(row.primary_row)
-    print(row.primary_row_inversion)
+    print("\n=======================\n" + "Tone row matrix:\n" + "=======================" )
     for i in row.matrix:
         print(i)
-    print(row.matrix)
