@@ -168,7 +168,7 @@ class twelve_tone_matrix(tone_row):
         [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]
         [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
         
-        Here are some examples of how specific transpositions are transposed
+        Here are some examples of how specific transpositions are written
         and what their values are:
         
         T0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
