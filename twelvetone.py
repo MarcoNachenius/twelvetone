@@ -7,10 +7,11 @@ to a person who may not be familiar with how the relationship between pitch and 
 The reader only needs to understand how this principle works on a numerical level.
 
 Notes are ordered incrementally,
-i.e. [0,1,2,3,4,5,6,7,8,9,10,11] = [C,C#,D,D#,E,F,Gb,G,G#,A,Bb,B]   <---C is arbitrarily used as note 0
+i.e. [0,1,2,3,4,5,6,7,8,9,10,11] = [C,C#,D,D#,E,F,Gb,G,G#,A,Bb,B]  
+    ('C' is arbitrarily chosen as note 0 in this example)
 
-The distance between two notes is measured in semitones. For example:
-note 5 can be two semitones higher than note 3 or four semitones lower than note 9.
+The distance between two notes is measured in semitones. For example,
+note 5 is two semitones higher than note 3 or four semitones lower than note 9.
 
 This series of notes repeats itself once the end of the index is reached. i.e. 
 ...0,1,2,3,4,5,6,7,8,9,10,11,0,1,2,3,4,5,6,7,8,9,10,11,0,1,2,3,4,5,6,7,8,9,10,11...
@@ -54,7 +55,6 @@ of the primary tone-row. Every row of the matrix is a unique transposition of th
 and every column a unique transposition of the tone-row's inversion.
 
 For example, the 12-tone matrix of the tone-row mentioned above will look as follows:
-
 [2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0]
 [11, 2, 10, 3, 4, 6, 1, 8, 7, 0, 5, 9]
 [3, 6, 2, 7, 8, 10, 5, 0, 11, 4, 9, 1]
@@ -217,24 +217,24 @@ class twelve_tone_matrix(tone_row):
         if transposition.startswith("I"):
             return self.transpose_row(self.primary_row_inversion, int(transposition[1:]))
 
-    def find_transformations(self, tone_row: list):
+    def find_transformations(self, tone_row: list, rows = True, inversions = True):
         """
-        returns a list of transformations that apply to the primary row
+        Returns a list of transformations that apply to the primary row
         """
         transformations = []
         for i in range(12):
-            if tone_row == self.transpose_row(self.primary_row, i):
-                transformations.append("T" + str(i))
-        
-            if tone_row == self.transpose_row(self.primary_row_retrograde, i):
-                transformations.append("R" + str(i))
-            
-            if tone_row == self.transpose_row(self.primary_row_inversion, i):
-                transformations.append("I" + str(i))
-            
-            if tone_row == self.transpose_row(self.pr_retrograde_inversion, i):
-                transformations.append("RI" + str(i))
-        
+            if rows:
+                if tone_row == self.transpose_row(self.primary_row, i):
+                    transformations.append(f"T{str(i)}")
+                if tone_row == self.transpose_row(self.primary_row_retrograde, i):
+                    transformations.append(f"R{str(i)}")
+
+            if inversions:
+                if tone_row == self.transpose_row(self.primary_row_inversion, i):
+                    transformations.append(f"I{str(i)}")
+                if tone_row == self.transpose_row(self.pr_retrograde_inversion, i):
+                    transformations.append(f"RI{str(i)}")
+
         return transformations
     
     

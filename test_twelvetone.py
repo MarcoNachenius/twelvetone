@@ -18,7 +18,7 @@ class test_tone_row(unittest.TestCase):
         octave_down = tc_matrix.transpose_row(tc_matrix.primary_row, -12)
         unison = tc_matrix.transpose_row(tc_matrix.primary_row, 12)
         tritone_up = tc_matrix.transpose_row(tc_matrix.primary_row, 6)
-        tritone_down = tc_matrix.transpose_row(tc_matrix.primary_row, 6)
+        tritone_down = tc_matrix.transpose_row(tc_matrix.primary_row, -6)
         
         self.assertEqual(octave_up, [6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1])
         self.assertEqual(octave_down, [6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1])
