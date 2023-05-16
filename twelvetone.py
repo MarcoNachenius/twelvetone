@@ -352,6 +352,9 @@ class twelve_tone_matrix(tone_row):
         reference_hexachord = self.prime_row[:6]
         reference_hexachord.sort()
         hexachords = []
+        if rows == False and retrogrades == False and inversions == False and inv_retrogrades == False:
+                return None
+            
         for i in range(12):
             #iterates through rows of matrix
             if i != 0 and rows:
@@ -376,13 +379,13 @@ class twelve_tone_matrix(tone_row):
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
                     hexachords.append(self.ret_inv_order[i])
-
+        
         return hexachords
 
 if __name__ == "__main__":
     row = twelve_tone_matrix()
     row.assign_random_row()
-    row.prime_row = list(range(12))
+    #row.prime_row = list(range(12))
     row.display_matrix()
     trans_row = row.transpose_row(row.prime_row, 6)
     print(row.row_order)

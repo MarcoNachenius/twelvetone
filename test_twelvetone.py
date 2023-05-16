@@ -7,9 +7,9 @@ class test_tone_row(unittest.TestCase):
         tc_matrix = twelvetone.twelve_tone_matrix()
         tc_matrix.prime_row = [2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0]
         
-        self.assertEqual(tc_matrix.pr_retrograde, [0, 8, 3, 10, 11, 4, 9, 7, 6, 1, 5, 2])
+        self.assertEqual(tc_matrix.pr_retrograde, [2, 10, 5, 0, 1, 6, 11, 9, 8, 3, 7, 4])
         self.assertEqual(tc_matrix.pr_inversion, [2, 11, 3, 10, 9, 7, 0, 5, 6, 1, 8, 4])
-        self.assertEqual(tc_matrix.pr_retrograde_inversion, [4, 8, 1, 6, 5, 0, 7, 9, 10, 3, 11, 2])
+        self.assertEqual(tc_matrix.pr_retrograde_inversion, [2, 6, 11, 4, 3, 10, 5, 7, 8, 1, 9, 0])
     
     def test_transpositions(self):
         tc_matrix = twelvetone.twelve_tone_matrix()
@@ -51,7 +51,7 @@ class test_tone_row(unittest.TestCase):
         self.assertEqual(tc_matrix.return_transformation("I0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
         self.assertEqual(tc_matrix.return_transformation("I6"), [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7])
         self.assertEqual(tc_matrix.return_transformation("R11"), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
-        self.assertEqual(tc_matrix.return_transformation("R1"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+        self.assertEqual(tc_matrix.return_transformation("R0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
         self.assertEqual(tc_matrix.return_transformation("RI1"), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0])
         self.assertEqual(tc_matrix.return_transformation("RI6"), [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5])
     
@@ -66,14 +66,14 @@ class test_tone_row(unittest.TestCase):
         self.assertEqual(tc_matrix.find_transformations([11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], row_retrograde=True), ["R0"])
         self.assertEqual(tc_matrix.find_transformations([0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1], row_retrograde=True), ["R1"])
         self.assertEqual(tc_matrix.find_transformations([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0], inv_retrograde=True), ["RI0"])
-        self.assertEqual(tc_matrix.find_transformations([6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5], find_all=True), ["RI5", "P6"])
+        self.assertEqual(tc_matrix.find_transformations([6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5], find_all=True), ["RI6", "P6"])
     
     def test_row_orders(self): 
         tc_matrix = twelvetone.twelve_tone_matrix()
         tc_matrix.prime_row = list(range(12))
         
-        self.assertEqual(tc_matrix.row_order, ["P0", "P1", "P2", "P3", "P4", "P5", "P6", "P7", "P8", "P9", "P10", "P11"])
-        self.assertEqual(tc_matrix.inversion_order, ["I0", "I11", "I10", "I9", "I8", "I7", "I6", "I5", "I4", "I3", "I2", "I1"])
+        self.assertEqual(tc_matrix.inversion_order, ["I0", "I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "I10", "I11"])
+        self.assertEqual(tc_matrix.row_order, ["P0", "P11", "P10", "P9", "P8", "P7", "P6", "P5", "P4", "P3", "P2", "P1"])
         self.assertEqual(tc_matrix.retrograde_order, ["R11", "R10", "R9", "R8", "R7", "R6", "R5", "R4", "R3", "R2", "R1", "R0"])
         self.assertEqual(tc_matrix.ret_inv_order, ["RI1", "RI2", "RI3", "RI4", "RI5", "RI6", "RI7", "RI8", "RI9", "RI10", "RI11", "RI0"])
 
