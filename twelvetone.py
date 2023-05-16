@@ -82,7 +82,7 @@ class tone_row (object):
         if tone_row is None:
             tone_row = []
         self.__primary_row = tone_row
-
+    
     @property
     def primary_row(self):
         return self.__primary_row
@@ -90,15 +90,14 @@ class tone_row (object):
     @primary_row.setter
     def primary_row(self, tone_row: list):
         self.__primary_row = tone_row
-
-    @property
-    def random_tone_row(self):
+        
+    def assign_random_row(self):
         """
-        Returns random 12-tone row
+        Assigns a random 12-tone row as the primary row(T0).
         """
         random_tone_row = list(range(12))
         random.shuffle(random_tone_row)
-        return random_tone_row
+        self.primary_row = random_tone_row
 
     @property
     def primary_row_retrograde(self):
@@ -107,7 +106,7 @@ class tone_row (object):
         """
         pr_retrograde = copy.deepcopy(self.primary_row)
         pr_retrograde.reverse()
-        self.transpose_row(pr_retrograde, self.primary_row[0] - pr_retrograde[0])
+        pr_retrograde = self.transpose_row(pr_retrograde, self.primary_row[0] - pr_retrograde[0])
         return pr_retrograde
 
     @property
@@ -134,13 +133,15 @@ class tone_row (object):
         """
         pr_ret_inv = copy.deepcopy(self.primary_row_inversion)
         pr_ret_inv.reverse()
-        self.transpose_row(pr_ret_inv, self.primary_row[0] -pr_ret_inv[0])
+        pr_ret_inv = self.transpose_row(pr_ret_inv, self.primary_row[0] -pr_ret_inv[0])
         return pr_ret_inv
     
     def transpose_row(self, tone_row: list, semitones: int):
         """
-        Moves all notes up(positive int) or down(negative int) by a 
+        Moves all notes in a tone row up(positive int) or down(negative int) by a 
         number or semitones.
+        
+        Returns the transposed list
         """
         transposed_row = copy.deepcopy(tone_row)
         transposed_row = [note + semitones for note in transposed_row]
@@ -282,10 +283,13 @@ class twelve_tone_matrix(tone_row):
     
     @property
     def retrograde_order(self):
-        row_order = [f"R{str(self.primary_row_retrograde[0])}"]
-        ret_row = self.primary_row_retrograde
+        """
+        The last column of the 12-tone matrix represents the first note of every retrograde
+        """
+        row_order = []
+        ret_row = [i[11] for i in self.matrix]
         reference_note = self.primary_row[0]
-        for i in range(1, 12):
+        for i in range(12):
             semitones_up = ret_row[i] - reference_note
             if semitones_up < 0:
                 semitones_up += 12
@@ -293,7 +297,7 @@ class twelve_tone_matrix(tone_row):
         return row_order
     
     @property
-    def row_inversion_order(self):
+    def inversion_order(self):
         row_order = ["I0"]
         reference_note = self.primary_row[0]
         for i in range(1, 12):
@@ -305,10 +309,13 @@ class twelve_tone_matrix(tone_row):
     
     @property
     def ret_inv_order(self):
-        row_order = [f"RI{str(self.pr_retrograde_inversion[0])}"]
-        ret_inv_row = self.pr_retrograde_inversion
+        """
+        The last row of the 12-tone matrix represents the first note of every retrograde inversion
+        """
+        row_order = []
+        ret_inv_row = self.matrix[11]
         reference_note = self.primary_row[0]
-        for i in range(1, 12):
+        for i in range(12):
             semitones_up = ret_inv_row[i] - reference_note
             if semitones_up < 0:
                 semitones_up += 12
@@ -325,6 +332,7 @@ class twelve_tone_matrix(tone_row):
         By definition T0, R0, I0 and RI0 can never be combinatorials of each other because they all share the first note.
         
         Returns an empty list if no hexachordal combinatorials exist.
+        Returns None if all of the arguments are false
         """
         
         if find_all:
@@ -332,6 +340,8 @@ class twelve_tone_matrix(tone_row):
             row_retrogrades = True
             inversions = True
             inv_retrogrades = True
+        if find_all == False and rows == False and row_retrogrades == False and inversions == False and inv_retrogrades == False:
+            return None
         reference_hexachord = self.primary_row[:6]
         reference_hexachord.sort()
         if row_retrogrades:
@@ -374,8 +384,8 @@ class twelve_tone_matrix(tone_row):
 
 if __name__ == "__main__":
     row = twelve_tone_matrix()
-    row.primary_row = row.random_tone_row
-    #row.primary_row = list(range(12))
+    #row.assign_random_row()
+    row.primary_row = list(range(12))
     print("=======================\n" + "Random tone row:\n" + "=======================" )
     print(row.primary_row)
     print("\n=======================\n" + "Tone row matrix:\n" + "=======================" )
@@ -383,8 +393,8 @@ if __name__ == "__main__":
         print(i)
     trans_row = row.transpose_row(row.primary_row, 6)
     print(row.row_order)
-    print(row.row_inversion_order)
+    print(row.inversion_order)
     print(row.retrograde_order)
     print(row.ret_inv_order)
-    #hexachords = row.find_hexachordal_combinatorials()
-    #print(hexachords)
+    hexachords = row.find_hexachordal_combinatorials()
+    print(hexachords)
