@@ -249,8 +249,8 @@ class twelve_tone_matrix(tone_row):
     def matrix(self):
         """
         Returns a two-dimensional 12*12 array
-        T0 is the first row([0:0] -> [0:12]) and
-        I0 is the first column ([0:0] -> [12:0])
+        T0 is always the first row([0:0] -> [0:12]) and
+        I0 is always the first column ([0:0] -> [12:0])
         """
         
         #adds first row and column of 12-tone matrix
@@ -323,11 +323,19 @@ class twelve_tone_matrix(tone_row):
             row_order.append(f"RI{str(semitones_up)}")
         return row_order
     
+    def display_matrix(self):
+        print("=======================\n" + "Random tone row:\n" + "=======================" )
+        print(self.prime_row)
+        print("\n=======================\n" + "Pone row matrix:\n" + "=======================\n" )
+        print("\t" + str(self.inversion_order))
+        for i in self.matrix:
+            print(i)
+    
     def find_hexachordal_combinatorials(self, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False):
         """
         Returns a list of transformations that that share combinatorial hexachords with the primary row.
-        (i.e The first 6 notes of every returned transformation are the same as 
-        the first 6 notes of the prime row, regardless of order.)
+        i.e The first 6 notes of every returned transformation are the same as 
+        the first 6 notes of the prime row, regardless of order.
         
         If any specific transformations (rows, retrogrades, etc.) are declared as True,
         the function will search for them only.
@@ -341,57 +349,41 @@ class twelve_tone_matrix(tone_row):
             retrogrades = True
             inversions = True
             inv_retrogrades = True
-        if find_all == False and rows == False and retrogrades == False and inversions == False and inv_retrogrades == False:
-            return None
         reference_hexachord = self.prime_row[:6]
         reference_hexachord.sort()
-        if retrogrades:
-            starting_retrograde = self.return_transformation("R0")
-        if inv_retrogrades:
-            starting_inv_retrograde = self.return_transformation("RI0")
         hexachords = []
-
-        for i in range(1,12):
-            if rows:
-                transposed_row = self.transpose_row(self.prime_row, i)
-                trans_row_hexachord = transposed_row[:6]
+        for i in range(12):
+            #iterates through rows of matrix
+            if i != 0 and rows:
+                trans_row_hexachord = self.matrix[i][:6]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(f"P{str(i)}")
-            
-            if inversions:
-                transposed_row = self.transpose_row(self.pr_inversion, i)
-                trans_row_hexachord = transposed_row[:6]
-                trans_row_hexachord.sort()
-                if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(f"I{str(i)}")
-            
+                    hexachords.append(self.row_order[i])
             if retrogrades:
-                transposed_row = self.transpose_row(starting_retrograde, i)
-                trans_row_hexachord = transposed_row[:6]
+                trans_row_hexachord = self.matrix[i][6:]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(f"R{str(i)}")
+                    hexachords.append(self.retrograde_order[i])
             
-            if inv_retrogrades:
-                transposed_row = self.transpose_row(starting_inv_retrograde, i)
-                trans_row_hexachord = transposed_row[:6]
+            #iterates through columns of matrix
+            if inversions:
+                trans_row_hexachord = [self.matrix[x][i] for x in range(6)]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(f"RI{str(i)}")
-        
-        return hexachords
+                    hexachords.append(self.inversion_order[i])
+            if inv_retrogrades:
+                trans_row_hexachord = [self.matrix[x][i] for x in range(6,12)]
+                trans_row_hexachord.sort()
+                if trans_row_hexachord == reference_hexachord:
+                    hexachords.append(self.ret_inv_order[i])
 
+        return hexachords
 
 if __name__ == "__main__":
     row = twelve_tone_matrix()
-    #row.assign_random_row()
+    row.assign_random_row()
     row.prime_row = list(range(12))
-    print("=======================\n" + "Random tone row:\n" + "=======================" )
-    print(row.prime_row)
-    print("\n=======================\n" + "Pone row matrix:\n" + "=======================" )
-    for i in row.matrix:
-        print(i)
+    row.display_matrix()
     trans_row = row.transpose_row(row.prime_row, 6)
     print(row.row_order)
     print(row.inversion_order)

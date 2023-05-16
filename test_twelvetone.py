@@ -50,10 +50,10 @@ class test_tone_row(unittest.TestCase):
         self.assertEqual(tc_matrix.return_transformation("P7"), [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6])
         self.assertEqual(tc_matrix.return_transformation("I0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
         self.assertEqual(tc_matrix.return_transformation("I6"), [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7])
-        self.assertEqual(tc_matrix.return_transformation("R0"), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
+        self.assertEqual(tc_matrix.return_transformation("R11"), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
         self.assertEqual(tc_matrix.return_transformation("R1"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
-        self.assertEqual(tc_matrix.return_transformation("RI0"), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0])
-        self.assertEqual(tc_matrix.return_transformation("RI5"), [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5])
+        self.assertEqual(tc_matrix.return_transformation("RI1"), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0])
+        self.assertEqual(tc_matrix.return_transformation("RI6"), [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5])
     
     def test_find_transformations(self):
         tc_matrix = twelvetone.twelve_tone_matrix()
