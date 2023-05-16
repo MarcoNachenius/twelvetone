@@ -75,7 +75,7 @@ identical, regardless of which tone-row is used.
 
 import random
 import copy
-
+import numpy as np
 class tone_row (object): 
     
     def __init__(self, tone_row=None, *args, **kwargs):
@@ -93,18 +93,28 @@ class tone_row (object):
 
     @property
     def random_tone_row(self):
+        """
+        Returns random 12-tone row
+        """
         random_tone_row = list(range(12))
         random.shuffle(random_tone_row)
         return random_tone_row
 
     @property
     def primary_row_retrograde(self):
+        """
+        Returns R0
+        """
         pr_retrograde = copy.deepcopy(self.primary_row)
         pr_retrograde.reverse()
+        self.transpose_row(pr_retrograde, self.primary_row[0] - pr_retrograde[0])
         return pr_retrograde
 
     @property
     def primary_row_inversion(self):
+        """
+        Returns I0
+        """
         row_inversion = [self.primary_row[0]]
         
         for i in range(1,12):
@@ -112,27 +122,33 @@ class tone_row (object):
             row_inversion.append(row_inversion[i-1] - semitones)
             if row_inversion[i] > 11:
                 row_inversion[i] -= 12
+                continue
             elif row_inversion[i] < 0:
                 row_inversion[i] += 12
         
         return row_inversion
     @property
     def pr_retrograde_inversion(self):
+        """
+        Returns RI0
+        """
         pr_ret_inv = copy.deepcopy(self.primary_row_inversion)
         pr_ret_inv.reverse()
+        self.transpose_row(pr_ret_inv, self.primary_row[0] -pr_ret_inv[0])
         return pr_ret_inv
     
     def transpose_row(self, tone_row: list, semitones: int):
         """
-        A positive number for semitones implies movement up by the specified
-        number of semitones, and vice versa.
+        Moves all notes up(positive int) or down(negative int) by a 
+        number or semitones.
         """
         transposed_row = copy.deepcopy(tone_row)
         transposed_row = [note + semitones for note in transposed_row]
         for i in range(12):
             if transposed_row[i] > 11:
                 transposed_row[i] -= 12
-            elif transposed_row[i] < 0:
+                continue
+            if transposed_row[i] < 0:
                 transposed_row[i] += 12
         
         return transposed_row
@@ -229,6 +245,11 @@ class twelve_tone_matrix(tone_row):
     
     @property
     def matrix(self):
+        """
+        Returns a two-dimensional 12*12 array
+        T0 is the first row([0:0] -> [0:12]) and
+        I0 is the first column ([0:0] -> [12:0])
+        """
         
         #adds first row and column of 12-tone matrix
         matrix = [self.primary_row]
@@ -243,7 +264,8 @@ class twelve_tone_matrix(tone_row):
                 matrix[matrix_row].append(matrix[0][matrix_column] + semitones)
                 if matrix[matrix_row][matrix_column] > 11:
                     matrix[matrix_row][matrix_column] -= 12
-                elif matrix[matrix_row][matrix_column] < 0:
+                    continue
+                if matrix[matrix_row][matrix_column] < 0:
                     matrix[matrix_row][matrix_column] += 12
         return matrix
     
@@ -252,7 +274,7 @@ class twelve_tone_matrix(tone_row):
         row_order = ["T0"]
         reference_note = self.primary_row[0]
         for i in range(1, 12):
-            semitones_up = self.primary_row[i] - reference_note
+            semitones_up = self.primary_row_inversion[i] - reference_note
             if semitones_up < 0:
                 semitones_up += 12
             row_order.append(f"T{str(semitones_up)}")
@@ -275,7 +297,7 @@ class twelve_tone_matrix(tone_row):
         row_order = ["I0"]
         reference_note = self.primary_row[0]
         for i in range(1, 12):
-            semitones_up = self.primary_row_inversion[i] - reference_note
+            semitones_up = self.primary_row[i] - reference_note
             if semitones_up < 0:
                 semitones_up += 12
             row_order.append(f"I{str(semitones_up)}")
@@ -292,6 +314,62 @@ class twelve_tone_matrix(tone_row):
                 semitones_up += 12
             row_order.append(f"RI{str(semitones_up)}")
         return row_order
+    
+    def find_hexachordal_combinatorials(self, find_all = True, rows=False, row_retrogrades=False, inversions=False, inv_retrogrades=False):
+        """
+        Returns a list of transformations that that share combinatorial hexachords with the primary row.
+        
+        All notes found in the first half(6 notes) of every returned transformation are in the second half(6 notes)
+        of the prime row(and vice versa) regardless of note order.
+        
+        By definition T0, R0, I0 and RI0 can never be combinatorials of each other because they all share the first note.
+        
+        Returns an empty list if no hexachordal combinatorials exist.
+        """
+        
+        if find_all:
+            rows = True
+            row_retrogrades = True
+            inversions = True
+            inv_retrogrades = True
+        reference_hexachord = self.primary_row[:6]
+        reference_hexachord.sort()
+        if row_retrogrades:
+            starting_retrograde = self.return_transformation("R0")
+        if inv_retrogrades:
+            starting_inv_retrograde = self.return_transformation("RI0")
+        hexachords = []
+
+        for i in range(1,12):
+            if rows:
+                transposed_row = self.transpose_row(self.primary_row, i)
+                trans_row_hexachord = transposed_row[6:]
+                trans_row_hexachord.sort()
+                if trans_row_hexachord == reference_hexachord:
+                    hexachords.append(f"T{str(i)}")
+            
+            if inversions:
+                transposed_row = self.transpose_row(self.primary_row_inversion, i)
+                trans_row_hexachord = transposed_row[6:]
+                trans_row_hexachord.sort()
+                if trans_row_hexachord == reference_hexachord:
+                    hexachords.append(f"I{str(i)}")
+            
+            if row_retrogrades:
+                transposed_row = self.transpose_row(starting_retrograde, i)
+                trans_row_hexachord = transposed_row[6:]
+                trans_row_hexachord.sort()
+                if trans_row_hexachord == reference_hexachord:
+                    hexachords.append(f"R{str(i)}")
+            
+            if inv_retrogrades:
+                transposed_row = self.transpose_row(starting_inv_retrograde, i)
+                trans_row_hexachord = transposed_row[6:]
+                trans_row_hexachord.sort()
+                if trans_row_hexachord == reference_hexachord:
+                    hexachords.append(f"RI{str(i)}")
+        
+        return hexachords
 
 
 if __name__ == "__main__":
@@ -306,8 +384,7 @@ if __name__ == "__main__":
     trans_row = row.transpose_row(row.primary_row, 6)
     print(row.row_order)
     print(row.row_inversion_order)
-    hexa = row.primary_row[6:12]
-    hexa.sort()
     print(row.retrograde_order)
-    print(hexa)
     print(row.ret_inv_order)
+    #hexachords = row.find_hexachordal_combinatorials()
+    #print(hexachords)
