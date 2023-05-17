@@ -76,6 +76,7 @@ identical, regardless of which tone-row is used.
 import random
 import copy
 import numpy as np
+
 class tone_row (object): 
     
     def __init__(self, tone_row=None, *args, **kwargs):
@@ -93,7 +94,7 @@ class tone_row (object):
         
     def assign_random_row(self):
         """
-        Assigns a random 12-tone row as the primary row(T0).
+        Assigns a random 12-tone row as the primary row(P0).
         """
         random_tone_row = list(range(12))
         random.shuffle(random_tone_row)
@@ -190,14 +191,14 @@ class tone_row (object):
         Here are some examples of how specific transpositions are written
         and what their values are:
         
-        T0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        P0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
         T7 = [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]
         I0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
         I6 = [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7]
-        R0 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
-        R1 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-        RI0 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
-        RI5 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
+        R11 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+        R0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+        RI1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
+        RI6 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
         """
         if transposition.startswith("P"):
             return self.transpose_row(self.prime_row, int(transposition[1:]))
@@ -249,30 +250,27 @@ class twelve_tone_matrix(tone_row):
     def matrix(self):
         """
         Returns a two-dimensional 12*12 array
-        T0 is always the first row([0:0] -> [0:12]) and
+        P0 is always the first row([0:0] -> [0:12]) and
         I0 is always the first column ([0:0] -> [12:0])
         """
-        
-        #adds first row and column of 12-tone matrix
         matrix = [self.prime_row]
-        matrix.extend(
-            copy.deepcopy([self.pr_inversion[i]]) for i in range(1, 12))
-        
-        #completes matrix by calculating the distance between the first note of the prime row
-        #and the first note of every other row, and transposing the prime row by that distance
-        for matrix_row in range(1,12):
-            semitones = matrix[matrix_row][0] - matrix[0][0]
-            for matrix_column in range(1,12):
-                matrix[matrix_row].append(matrix[0][matrix_column] + semitones)
-                if matrix[matrix_row][matrix_column] > 11:
-                    matrix[matrix_row][matrix_column] -= 12
-                    continue
-                if matrix[matrix_row][matrix_column] < 0:
-                    matrix[matrix_row][matrix_column] += 12
+        for i in self.pr_inversion:
+            if i == self.prime_row[0]:
+                continue
+            interval = i - self.prime_row[0]
+            if interval < 0:
+                interval += 12
+            matrix.append(self.transpose_row(self.prime_row, interval))
         return matrix
+        
+
     
     @property
     def row_order(self):
+        """
+        Returns the order in which rows appear on 
+        the 12-tone matrix from top to bottom
+        """
         row_order = ["P0"]
         reference_note = self.prime_row[0]
         for i in range(1, 12):
@@ -285,7 +283,8 @@ class twelve_tone_matrix(tone_row):
     @property
     def retrograde_order(self):
         """
-        The last column of the 12-tone matrix represents the first note of every retrograde
+        Returns the order in which retrogrades appear on 
+        the 12-tone matrix from top to bottom
         """
         row_order = []
         ret_row = [i[11] for i in self.matrix]
@@ -299,7 +298,12 @@ class twelve_tone_matrix(tone_row):
     
     @property
     def inversion_order(self):
+        """
+        Returns the order in which inversions appear on 
+        the 12-tone matrix from left to right
+        """
         row_order = ["I0"]
+        #The first row of the 12-tone matrix represents the first note of every inversion
         reference_note = self.prime_row[0]
         for i in range(1, 12):
             semitones_up = self.prime_row[i] - reference_note
@@ -311,9 +315,11 @@ class twelve_tone_matrix(tone_row):
     @property
     def ret_inv_order(self):
         """
-        The last row of the 12-tone matrix represents the first note of every retrograde inversion
+        Returns the order in which retrograde inversions appear on 
+        the 12-tone matrix from left to right
         """
         row_order = []
+        #The last row of the 12-tone matrix represents the first note of every retrograde inversion
         ret_inv_row = self.matrix[11]
         reference_note = self.prime_row[0]
         for i in range(12):
@@ -327,9 +333,9 @@ class twelve_tone_matrix(tone_row):
         print("=======================\n" + "Random tone row:\n" + "=======================" )
         print(self.prime_row)
         print("\n=======================\n" + "Pone row matrix:\n" + "=======================\n" )
-        print("\t" + str(self.inversion_order))
-        for i in self.matrix:
-            print(i)
+        print(self.inversion_order)
+        for i in range(12):
+            print(self.row_order[i] + str(self.matrix[i]) + self.retrograde_order[i])
     
     def find_hexachordal_combinatorials(self, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False):
         """
@@ -379,7 +385,7 @@ class twelve_tone_matrix(tone_row):
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
                     hexachords.append(self.ret_inv_order[i])
-        
+
         return hexachords
 
 if __name__ == "__main__":
