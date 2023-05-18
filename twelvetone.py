@@ -49,7 +49,7 @@ By reversing the traversal of distance between every note, the inversion is gene
 
 If every note of a tone row (or its inversion) is uniformly moved up or down by the same number of semitones,
 it is referred to as a transposition. Schoenberg devised the 12-tone matrix as a way of representing every
-possible transposition. A 12-tone matrix is a two-dimensional array. The first row of the array(read from
+possible transposition. A 12-tone matrix is a 12*12 two-dimensional array. The first row of the array(read from
 left to right) is the primary tone-row. The first column(read from top to bottom) represents the inversion
 of the primary tone-row. Every row of the matrix is a unique transposition of the tone-row,
 and every column a unique transposition of the tone-row's inversion.
@@ -268,7 +268,7 @@ class twelve_tone_matrix(tone_row):
     @property
     def row_order(self):
         """
-        Returns the order in which rows appear on 
+        Returns the order of row transpositions of 
         the 12-tone matrix from top to bottom
         """
         row_order = ["P0"]
@@ -283,7 +283,7 @@ class twelve_tone_matrix(tone_row):
     @property
     def retrograde_order(self):
         """
-        Returns the order in which retrogrades appear on 
+        Returns the order of retrograde transpositions of 
         the 12-tone matrix from top to bottom
         """
         row_order = []
@@ -299,7 +299,7 @@ class twelve_tone_matrix(tone_row):
     @property
     def inversion_order(self):
         """
-        Returns the order in which inversions appear on 
+        Returns the order of inversion transpositions of 
         the 12-tone matrix from left to right
         """
         row_order = ["I0"]
@@ -315,7 +315,7 @@ class twelve_tone_matrix(tone_row):
     @property
     def ret_inv_order(self):
         """
-        Returns the order in which retrograde inversions appear on 
+        Returns the order of retrograde inversion transpositions of 
         the 12-tone matrix from left to right
         """
         row_order = []
@@ -388,15 +388,154 @@ class twelve_tone_matrix(tone_row):
 
         return hexachords
 
+class note_names():
+    @classmethod
+    @property
+    def number_note_relations(cls):
+        return {
+            "Ab": 11,
+            "A": 0,
+            "A#": 1,
+            "Bb": 1,
+            "B": 2,
+            "B#": 3,
+            "Cb": 2,
+            "C": 3,
+            "C#": 4,
+            "Db": 4,
+            "D": 5,
+            "D#": 6,
+            "Eb": 6,
+            "E": 7,
+            "E#": 8,
+            "Fb": 7,
+            "F": 8,
+            "F#": 9,
+            "Gb": 9,
+            "G": 10,
+            "G#": 11,
+        }
+class intervals(): 
+    """
+    In music, an interval is the distance between two notes, measured in semitones.
+    Interval sizes have specific names, some of which may refer to intervals of the same size.
+
+    For example, the interval of one semitone is commonly referred to as 
+    a 'minor second'(m2). If the note 'C' moves up by a semitone to
+    the note 'Db', it can be said the 'Db' is a minor second(m2) higher
+    than 'C'.
+    """
+    @classmethod
+    @property
+    def first_interval_lengths(cls):
+        return {10: "dd1", 11: "d1", 0: "P1", 1: "A1", 2: "AA1"}
+    @classmethod
+    @property
+    def second_interval_lengths(cls):
+        return {11 : "dd2", 0: "d2", 1: "m2", 2: "M2", 3: "A2", 4: "AA2"}
+    
+    @classmethod
+    @property
+    def third_interval_lengths(cls):
+        return {1 : "dd3", 2: "d3", 3: "m3", 4: "M3", 5: "A3"}
+    
+    @classmethod
+    @property
+    def fourth_interval_lengths(cls):
+        return {3 : "dd4", 4: "d4", 5: "P4", 6: "A4"}
+    
+    @classmethod
+    @property
+    def fifth_interval_lengths(cls):
+        return {5 : "dd5", 6: "d5", 7: "P5", 8: "A5"}
+    
+    @classmethod
+    @property
+    def sixth_interval_lengths(cls):
+        return {6 : "dd6", 7: "d6", 8: "m6", 9: "M6", 10: "A6"}
+    
+    @classmethod
+    @property
+    def seventh_interval_lengths(cls):
+        return {8 : "dd7", 9: "d7", 10: "m7", 11: "M7", 0: "A7", 1: "AA7"}
+    
+    @classmethod
+    def semitone_distance(cls, starting_note: str, direction: str, final_note: str):
+        """
+        Returns the number of semitones between two notes within an octave space
+        """
+        if starting_note[0].isupper == False:
+            print(f"Starting note {starting_note[0]} should be written in uppercase")
+        if final_note[0].isupper == False:
+            print(f"Final note {final_note[0]} should be written in uppercase")
+        if direction not in {"up", "down"}:
+            print("Invalid direction indicator, direction can either be 'up' or 'down'")
+        if direction == "up":
+            semitone_distance = note_names.number_note_relations[final_note] - note_names.number_note_relations[starting_note]
+            if semitone_distance < 0:
+                semitone_distance += 12
+            return semitone_distance
+        
+        if direction == "down":
+            semitone_distance = note_names.number_note_relations[starting_note] - note_names.number_note_relations[final_note]
+            if semitone_distance < 0:
+                semitone_distance += 12
+            return semitone_distance
+    @classmethod
+    def note_interval_name(cls, starting_note: str, direction: str, final_note: str):
+        """
+        Returns the interval name between two notes.
+        eg. interval_name('C', 'up', 'F#') will return 'A4'
+        
+        Note names should be entered in uppercase.
+        Only single accidentals('#' = sharp, 'b' = flat) are allowed(no double sharps/flats).
+        direction can be either 'up' or 'down'
+        
+        Abbreviations: 
+        m = minor
+        M = Major
+        P = perfect
+        d = diminished
+        A = augmented
+        AA = double-augmented
+        dd = double-diminished
+        
+        Unison intervals(i.e. interval between two notes that share the same note letter) are expressed as 1
+        eg. interval_name('Cb', 'up', 'C#') will return 'AA1'
+        
+        """
+        if starting_note[0].isupper == False:
+            print(f"Starting note {starting_note[0]} should be written in uppercase")
+        if final_note[0].isupper == False:
+            print(f"Final note {final_note[0]} should be written in uppercase")
+        if direction not in {"up", "down"}:
+            print("Invalid direction indicator, direction can either be 'up' or 'down'")
+        
+        note_order = ("A", "B", "C", "D", "E", "F", "G")
+        interval_number = note_order.index(final_note[0]) - note_order.index(starting_note[0]) + 1
+        if interval_number < 0:
+            interval_number += 7
+        if direction == "down":
+            interval_number = 9 - interval_number
+        
+        if interval_number == 1:
+            return cls.first_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+        if interval_number == 2:
+            return cls.second_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+        if interval_number == 3:
+            return cls.third_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+        if interval_number == 4:
+            return cls.fourth_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+        if interval_number == 5:
+            return cls.fifth_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+        if interval_number == 6:
+            return cls.sixth_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+        if interval_number == 7:
+            return cls.seventh_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+
 if __name__ == "__main__":
     row = twelve_tone_matrix()
     row.assign_random_row()
     #row.prime_row = list(range(12))
     row.display_matrix()
-    trans_row = row.transpose_row(row.prime_row, 6)
-    print(row.row_order)
-    print(row.inversion_order)
-    print(row.retrograde_order)
-    print(row.ret_inv_order)
-    hexachords = row.find_hexachordal_combinatorials()
-    print(hexachords)
+    print(intervals.note_interval_name("Db", "up", "E#"))
