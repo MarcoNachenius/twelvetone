@@ -110,6 +110,18 @@ class tone_row (object):
         pr_retrograde.reverse()
         pr_retrograde = self.transpose_row(pr_retrograde, self.prime_row[0] - pr_retrograde[0])
         return pr_retrograde
+    
+    @classmethod
+    def prime_retrograde(cls, prime_row: list):
+        """
+        Returns R0
+        
+        R0 is the retrograde of a given tone row that starts on the same note as the prime row.
+        """
+        pr_retrograde = copy.deepcopy(prime_row)
+        pr_retrograde.reverse()
+        pr_retrograde = cls.transpose_row(pr_retrograde, prime_row[0] - pr_retrograde[0])
+        return pr_retrograde
 
     @property
     def pr_inversion(self):
@@ -130,7 +142,7 @@ class tone_row (object):
         return row_inversion
     
     @classmethod
-    def row_inversion(cls, prime_row: list):
+    def prime_inversion(cls, prime_row: list):
         """
         Returns the inversion(I0) of a given tone row
         """
@@ -158,6 +170,19 @@ class tone_row (object):
         return pr_ret_inv
     
     @classmethod
+    def prime_retrograde_inversion(cls, prime_row: list):
+        """
+        Returns RI0
+        
+        RI0 is the retrograde inversion of a tone row that 
+        starts on the same note as the prime row
+        """
+        pr_ret_inv = cls.prime_inversion(prime_row)
+        pr_ret_inv.reverse()
+        pr_ret_inv = cls.transpose_row(pr_ret_inv, prime_row[0] -pr_ret_inv[0])
+        return pr_ret_inv
+    
+    @classmethod
     def transpose_row(cls, tone_row: list, semitones: int):
         """
         Moves all notes in a tone row up(positive int) or down(negative int) by a 
@@ -176,7 +201,8 @@ class tone_row (object):
         
         return transposed_row
     
-    def return_transformation(self, transposition: str):
+    @classmethod
+    def return_transformation(cls, tone_row: list, transformation: str):
         """
         Transposition of a tone row occurs when all notes are moved up or
         down by the same amount of semitones.
@@ -220,17 +246,17 @@ class tone_row (object):
         RI1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
         RI6 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
         """
-        if transposition.startswith("P"):
-            return self.transpose_row(self.prime_row, int(transposition[1:]))
+        if transformation.startswith("P"):
+            return cls.transpose_row(tone_row, int(transformation[1:]))
 
-        if transposition.startswith("RI"):
-            return self.transpose_row(self.pr_retrograde_inversion, int(transposition[2:]))
+        if transformation.startswith("RI"):
+            return cls.transpose_row(cls.prime_retrograde_inversion(tone_row), int(transformation[2:]))
         
-        if transposition.startswith("R"):
-            return self.transpose_row(self.pr_retrograde, int(transposition[1:]))
+        if transformation.startswith("R"):
+            return cls.transpose_row(cls.prime_retrograde(tone_row), int(transformation[1:]))
         
-        if transposition.startswith("I"):
-            return self.transpose_row(self.pr_inversion, int(transposition[1:]))
+        if transformation.startswith("I"):
+            return cls.transpose_row(cls.prime_inversion(tone_row), int(transformation[1:]))
     
     def find_transformations(self, tone_row: list, find_all = False, row = False, inversion = False,  row_retrograde = False, inv_retrograde = False):
         """
@@ -281,7 +307,7 @@ class twelve_tone_matrix(tone_row):
         if sorted_row != list(range(12)):
             print("Warning: the provided tone row is not a valid 12-tone row")
         matrix = [prime_row]
-        for i in cls.row_inversion(prime_row):
+        for i in cls.prime_inversion(prime_row):
             if i == prime_row[0]:
                 continue
             interval = i - prime_row[0]
@@ -677,5 +703,5 @@ if __name__ == "__main__":
     print(intervals.semitone_distance("A##", "up", "Abb"))
     print(intervals.note_interval_name("A##", "down", "E##"))
     print(intervals.get_transposed_note("A#", "m7", "down"))
-    print(tone_row.row_inversion(list(range(12))))
+    print(tone_row.prime_inversion(list(range(12))))
     print(combinatoriality.find_hexachordal_combinatorials(list(range(12))))

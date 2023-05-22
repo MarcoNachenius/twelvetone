@@ -43,17 +43,17 @@ class test_tone_row(unittest.TestCase):
                                             [4, 7, 3, 8, 9, 11, 6, 1, 0, 5, 10, 2]])
     
     def test_return_transformation(self):
-        tc_matrix = twelvetone.twelve_tone_matrix()
-        tc_matrix.prime_row = list(range(12))
+        tc_tone_row = twelvetone.tone_row()
+        tc_tone_row.prime_row = list(range(12))
         
-        self.assertEqual(tc_matrix.return_transformation("P0"), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
-        self.assertEqual(tc_matrix.return_transformation("P7"), [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6])
-        self.assertEqual(tc_matrix.return_transformation("I0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
-        self.assertEqual(tc_matrix.return_transformation("I6"), [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7])
-        self.assertEqual(tc_matrix.return_transformation("R11"), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
-        self.assertEqual(tc_matrix.return_transformation("R0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
-        self.assertEqual(tc_matrix.return_transformation("RI1"), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0])
-        self.assertEqual(tc_matrix.return_transformation("RI6"), [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5])
+        self.assertEqual(tc_tone_row.return_transformation(tc_tone_row.prime_row, "P0"), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+        self.assertEqual(tc_tone_row.return_transformation(tc_tone_row.prime_row, "P7"), [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6])
+        self.assertEqual(tc_tone_row.return_transformation(tc_tone_row.prime_row, "I0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+        self.assertEqual(tc_tone_row.return_transformation(tc_tone_row.prime_row, "I6"), [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7])
+        self.assertEqual(tc_tone_row.return_transformation(tc_tone_row.prime_row, "R11"), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
+        self.assertEqual(tc_tone_row.return_transformation(tc_tone_row.prime_row, "R0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+        self.assertEqual(tc_tone_row.return_transformation(tc_tone_row.prime_row, "RI1"), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0])
+        self.assertEqual(tc_tone_row.return_transformation(tc_tone_row.prime_row, "RI6"), [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5])
     
     def test_find_transformations(self):
         tc_matrix = twelvetone.twelve_tone_matrix()
