@@ -391,72 +391,110 @@ class twelve_tone_matrix(tone_row):
 class note_names():
     @classmethod
     @property
-    def number_note_relations(cls):
+    def note_name_to_number_relations(cls):
+        """
+        Returns a dictionary of note names and their position within 12 ordered semitones.
+        A is arbitrarily chosen to represent position 0
+        """
         return {
+            "Abb": 10,
             "Ab": 11,
             "A": 0,
             "A#": 1,
+            "A##": 2,
+            "Bbb": 0,
             "Bb": 1,
             "B": 2,
             "B#": 3,
+            "B##": 4,
+            "Cbb": 1,
             "Cb": 2,
             "C": 3,
             "C#": 4,
+            "C##": 5,
+            "Dbb": 3,
             "Db": 4,
             "D": 5,
             "D#": 6,
+            "D##": 7,
+            "Ebb": 5,
             "Eb": 6,
             "E": 7,
             "E#": 8,
+            "E##": 9,
+            "Fbb": 6,
             "Fb": 7,
             "F": 8,
             "F#": 9,
+            "F##": 10,
+            "Gbb": 8,
             "Gb": 9,
             "G": 10,
             "G#": 11,
+            "G##": 0,
         }
 class intervals(): 
     """
-    In music, an interval is the distance between two notes, measured in semitones.
+    An interval is the distance between two notes, measured in semitones.
     Interval sizes have specific names, some of which may refer to intervals of the same size.
 
     For example, the interval of one semitone is commonly referred to as 
     a 'minor second'(m2). If the note 'C' moves up by a semitone to
     the note 'Db', it can be said the 'Db' is a minor second(m2) higher
     than 'C'.
+    
+    Accidental symbols:
+        # = sharp
+        b = flat
+        ## = double-sharp
+        bb = double-flat
+        
+    Interval abbreviations: 
+        m = minor
+        M = Major
+        P = perfect
+        d = diminished
+        A = augmented
+        AA = double-augmented
+        dd = double-diminished
+        AAA = triple-augmented
+        ddd = triple-diminished
+        AAAA = quadruple-augmented
+        dddd = quadruple-diminished
     """
     @classmethod
     @property
-    def first_interval_lengths(cls):
-        return {10: "dd1", 11: "d1", 0: "P1", 1: "A1", 2: "AA1"}
-    @classmethod
-    @property
-    def second_interval_lengths(cls):
-        return {11 : "dd2", 0: "d2", 1: "m2", 2: "M2", 3: "A2", 4: "AA2"}
+    def first_interval_sizes(cls):
+        return {8: "dddd1", 9: "ddd1", 10: "dd1", 11: "d1", 0: "P1", 1: "A1", 2: "AA1", 3: "AAA1", 4: "AAAA1"}
     
     @classmethod
     @property
-    def third_interval_lengths(cls):
-        return {1 : "dd3", 2: "d3", 3: "m3", 4: "M3", 5: "A3"}
+    def second_interval_sizes(cls):
+        return {10: "ddd2", 11 : "dd2", 0: "d2", 1: "m2", 2: "M2", 3: "A2", 4: "AA2"}
     
     @classmethod
     @property
-    def fourth_interval_lengths(cls):
-        return {3 : "dd4", 4: "d4", 5: "P4", 6: "A4"}
+    def third_interval_sizes(cls):
+        return {0 : "ddd3", 1 : "dd3", 2: "d3", 3: "m3", 4: "M3", 5: "A3", 6: "AA3"}
     
     @classmethod
     @property
-    def fifth_interval_lengths(cls):
-        return {5 : "dd5", 6: "d5", 7: "P5", 8: "A5"}
+    def fourth_interval_sizes(cls):
+        return {2 : "ddd4", 3 : "dd4", 4: "d4", 5: "P4", 6: "A4", 7: "AA4"}
     
     @classmethod
     @property
-    def sixth_interval_lengths(cls):
-        return {6 : "dd6", 7: "d6", 8: "m6", 9: "M6", 10: "A6"}
+    def fifth_interval_sizes(cls):
+        return {5 : "dd5", 6: "d5", 7: "P5", 8: "A5", 9: "AA5"}
     
     @classmethod
     @property
-    def seventh_interval_lengths(cls):
+    def sixth_interval_sizes(cls):
+        return {6 : "dd6", 7: "d6", 8: "m6", 9: "M6", 10: "A6", 11: "AA6"}
+    
+    @classmethod
+    @property
+    def seventh_interval_sizes(cls):
         return {8 : "dd7", 9: "d7", 10: "m7", 11: "M7", 0: "A7", 1: "AA7"}
     
     @classmethod
@@ -471,13 +509,13 @@ class intervals():
         if direction not in {"up", "down"}:
             print("Invalid direction indicator, direction can either be 'up' or 'down'")
         if direction == "up":
-            semitone_distance = note_names.number_note_relations[final_note] - note_names.number_note_relations[starting_note]
+            semitone_distance = note_names.note_name_to_number_relations[final_note] - note_names.note_name_to_number_relations[starting_note]
             if semitone_distance < 0:
                 semitone_distance += 12
             return semitone_distance
         
         if direction == "down":
-            semitone_distance = note_names.number_note_relations[starting_note] - note_names.number_note_relations[final_note]
+            semitone_distance = note_names.note_name_to_number_relations[starting_note] - note_names.note_name_to_number_relations[final_note]
             if semitone_distance < 0:
                 semitone_distance += 12
             return semitone_distance
@@ -488,10 +526,14 @@ class intervals():
         eg. interval_name('C', 'up', 'F#') will return 'A4'
         
         Note names should be entered in uppercase.
-        Only single accidentals('#' = sharp, 'b' = flat) are allowed(no double sharps/flats).
-        direction can be either 'up' or 'down'
         
-        Abbreviations: 
+        Accidental symbols:
+        # = sharp
+        b = flat
+        ## = double-sharp
+        bb = double-flat
+        
+        Interval abbreviations: 
         m = minor
         M = Major
         P = perfect
@@ -499,6 +541,10 @@ class intervals():
         A = augmented
         AA = double-augmented
         dd = double-diminished
+        AAA = triple-augmented
+        ddd = triple-diminished
+        AAAA = quadruple-augmented
+        dddd = quadruple-diminished
         
         Unison intervals(i.e. interval between two notes that share the same note letter) are expressed as 1
         eg. interval_name('Cb', 'up', 'C#') will return 'AA1'
@@ -509,33 +555,73 @@ class intervals():
         if final_note[0].isupper == False:
             print(f"Final note {final_note[0]} should be written in uppercase")
         if direction not in {"up", "down"}:
-            print("Invalid direction indicator, direction can either be 'up' or 'down'")
+            print("Invalid direction indicator, direction should be 'up' or 'down'")
         
         note_order = ("A", "B", "C", "D", "E", "F", "G")
-        interval_number = note_order.index(final_note[0]) - note_order.index(starting_note[0]) + 1
-        if interval_number < 0:
+        #assumes direction == "true"
+        interval_number = note_order.index(final_note[0]) - note_order.index(starting_note[0]) +1
+        if interval_number < 1:
             interval_number += 7
         if direction == "down":
             interval_number = 9 - interval_number
         
         if interval_number == 1:
-            return cls.first_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+            return cls.first_interval_sizes[cls.semitone_distance(starting_note, direction, final_note)]
         if interval_number == 2:
-            return cls.second_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+            return cls.second_interval_sizes[cls.semitone_distance(starting_note, direction, final_note)]
         if interval_number == 3:
-            return cls.third_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+            return cls.third_interval_sizes[cls.semitone_distance(starting_note, direction, final_note)]
         if interval_number == 4:
-            return cls.fourth_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+            return cls.fourth_interval_sizes[cls.semitone_distance(starting_note, direction, final_note)]
         if interval_number == 5:
-            return cls.fifth_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+            return cls.fifth_interval_sizes[cls.semitone_distance(starting_note, direction, final_note)]
         if interval_number == 6:
-            return cls.sixth_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+            return cls.sixth_interval_sizes[cls.semitone_distance(starting_note, direction, final_note)]
         if interval_number == 7:
-            return cls.seventh_interval_lengths[cls.semitone_distance(starting_note, direction, final_note)]
+            return cls.seventh_interval_sizes[cls.semitone_distance(starting_note, direction, final_note)]
+    
+    @classmethod
+    def get_transposed_note(cls, starting_note: str, interval_name: str, direction: str):
+        """
+        Returns the note name of a note that is transposed by a specific interval
+        in a specified direction.
+        
+        For example, if the used wants to find the name of the note that is a major
+        second below 'C', the implementation of the function will look as follows:
+        
+        transposed_note = intervals.get_transposed_note('C', 'M2', 'down')
+        (transposed_note = 'Bb')
+        
+        Accidental symbols:
+        # = sharp
+        b = flat
+        ## = double-sharp
+        bb = double-flat
+        
+        Interval abbreviations: 
+        m = minor
+        M = Major
+        P = perfect
+        d = diminished
+        A = augmented
+        AA = double-augmented
+        dd = double-diminished
+        AAA = triple-augmented
+        ddd = triple-diminished
+        AAAA = quadruple-augmented
+        dddd = quadruple-diminished
+        """
+        
+        for key in note_names.note_name_to_number_relations.keys():
+            if cls.note_interval_name(starting_note, direction, key) == interval_name:
+                return key
 
+    
 if __name__ == "__main__":
     row = twelve_tone_matrix()
     row.assign_random_row()
     #row.prime_row = list(range(12))
     row.display_matrix()
-    print(intervals.note_interval_name("Db", "up", "E#"))
+    print(intervals.semitone_distance("A##", "up", "Abb"))
+    print(intervals.note_interval_name("A##", "up", "Ebb"))
+    print(intervals.get_transposed_note("A", "m7", "down"))
