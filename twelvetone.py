@@ -248,7 +248,7 @@ class tone_row (object):
         """
         if transformation.startswith("P"):
             return cls.transpose_row(tone_row, int(transformation[1:]))
-
+        
         if transformation.startswith("RI"):
             return cls.transpose_row(cls.prime_retrograde_inversion(tone_row), int(transformation[2:]))
         
@@ -283,9 +283,8 @@ class tone_row (object):
             if inv_retrograde and tone_row == self.transpose_row(
                 self.pr_retrograde_inversion, i):
                 transformations.append(f"RI{str(i)}")
-
+            
         return transformations
-    
 
 class twelve_tone_matrix(tone_row):
     
@@ -410,13 +409,18 @@ class twelve_tone_matrix(tone_row):
 class combinatoriality():
     
     @classmethod
-    def find_hexachordal_combinatorials(cls, tone_row: list, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False):
+    def find_hexachordal_combinatorials(cls, tone_row: list, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False, include_row = False):
         """
         Returns a list of transformations that that share combinatorial hexachords with the primary row.
         i.e The first 6 notes of every returned transformation are the same as 
         the first 6 notes of the prime row, regardless of order.
         
-        If any specific transformations (rows, retrogrades, etc.) are declared as True,
+        If include_tone_row is set to True, the function will return a list of 
+        the transformation of the tone row that shares hexachordal combinatoriality, 
+        followed by 
+        
+        If any specific transformations (rows, retrogrades, etc.) are declared as True
+        when the function is invoked
         the function will search for them only.
         
         Returns an empty list if no hexachordal combinatorials exist.
@@ -470,7 +474,7 @@ class note_names():
     def note_to_number_relations(cls):
         """
         Returns a dictionary of note names and their position within 12 ordered semitones.
-        'C' represents position 0 in order to conform to MIDI pitch numbering calculations
+        'C' represents position 0 in order to conform to MIDI pitch numbering conventions
         (key = note name,  val = note number)
         """
         return {
@@ -510,6 +514,37 @@ class note_names():
             "G#": 8,
             "G##": 9,
         }
+    
+    @classmethod
+    @property
+    def number_to_sharp_relations(cls):
+        """
+        {note number :  note name}
+        
+        Returns a dictionary of note names and their position within 12 ordered semitones.
+        Every note number that cannot be expressed as a natural is expressed as a sharp.
+        'C' represents position 0 in order to conform to MIDI pitch numbering conventions.
+        
+        Stockhausen proposed this format as a representation for atonal music that makes use
+        of twelve equally-distanced semitones to divide an octave. As such, this library makes
+        use of this dictionary as a default representation of note names that are represented
+        by a numerical value.
+        """
+        return {
+            9 :"A",
+            10 :"A#",
+            11 :"B",
+            0 :"C",
+            1 :"C#",
+            2 :"D",
+            3 :"D#",
+            4 :"E",
+            5 :"F",
+            6 :"F#",
+            7 :"G",
+            8 :"G#",
+        }
+
 class intervals(): 
     """
     An interval is the distance between two notes, measured in semitones.
@@ -701,6 +736,27 @@ class intervals():
             if cls.note_interval_name(starting_note, direction, key) == interval_name:
                 return key
 
+class xml_writer():
+    
+    @classmethod
+    def write_twelvetone_report(cls, prime_row: list, file_name: str, directory = None):
+        """
+        Creates a .xml file with the following pats:
+        P0
+        R0
+        I0
+        RI0
+        (hexachordal combinatorials if they exist)
+        
+        Every part's tone row is written in quarter notes
+        """
+        if directory is None:
+            directory = "./xml_files"
+        if file_name[len(file_name) -3:] != "xml":
+            print(f"Creation error: file name({file_name}) should end with '.xml'")
+            return
+        part_names = ["P0", "R0", "I0", "RI0"]
+        additional_parts = []
     
 if __name__ == "__main__":
     row = twelve_tone_matrix()
