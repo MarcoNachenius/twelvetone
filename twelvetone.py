@@ -464,12 +464,13 @@ class combinatoriality():
         return hexachords
 
 class note_names():
+    
     @classmethod
     @property
     def note_to_number_relations(cls):
         """
         Returns a dictionary of note names and their position within 12 ordered semitones.
-        'C' represents position 0 in order to conform to MIDI pitch numbering
+        'C' represents position 0 in order to conform to MIDI pitch numbering calculations
         (key = note name,  val = note number)
         """
         return {
@@ -625,6 +626,14 @@ class intervals():
         Unison intervals(i.e. interval between two notes that share the same note letter) are expressed as 1
         eg. interval_name('Cb', 'up', 'C#') will return 'AA1'
         
+        User should refrain from making use of double sharp/flat notes, even though their use is allowed in this function.
+        This functions is written within the context of twelve-tone composition.
+        Double sharps/flats are primarily used within a tonal context.
+        In twelve-tone composition, double sharps/flats are mostly used in rare cases where it would
+        make the readability of the score easier.
+        Movements from a note with a double-sharp to a note with a double-flat(or vice versa) is 
+        practically unheard of in 12-tone composition, as it would make the music extremely challenging to read
+        and serves no practical purpose in visually demonstrating transformations of tone rows.
         """
         if starting_note[0].isupper == False:
             print(f"Starting note {starting_note[0]} should be written in uppercase")
