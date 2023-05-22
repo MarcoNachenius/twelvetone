@@ -76,6 +76,7 @@ identical, regardless of which tone-row is used.
 import random
 import copy
 import numpy as np
+import music21
 
 class tone_row (object): 
     
@@ -128,6 +129,24 @@ class tone_row (object):
         
         return row_inversion
     
+    @classmethod
+    def row_inversion(cls, prime_row: list):
+        """
+        Returns the inversion(I0) of a given tone row
+        """
+        row_inversion = [prime_row[0]]
+        
+        for i in range(1,12):
+            semitones = prime_row[i] - prime_row[i-1]
+            row_inversion.append(row_inversion[i-1] - semitones)
+            if row_inversion[i] > 11:
+                row_inversion[i] -= 12
+                continue
+            if row_inversion[i] < 0:
+                row_inversion[i] += 12
+        
+        return row_inversion
+    
     @property
     def pr_retrograde_inversion(self):
         """
@@ -138,7 +157,8 @@ class tone_row (object):
         pr_ret_inv = self.transpose_row(pr_ret_inv, self.prime_row[0] -pr_ret_inv[0])
         return pr_ret_inv
     
-    def transpose_row(self, tone_row: list, semitones: int):
+    @classmethod
+    def transpose_row(cls, tone_row: list, semitones: int):
         """
         Moves all notes in a tone row up(positive int) or down(negative int) by a 
         number or semitones.
@@ -246,10 +266,34 @@ class twelve_tone_matrix(tone_row):
     def __init__(self, *args, **kwargs):
         tone_row.__init__(self)
     
+    @classmethod
+    def twelve_tone_matrix(cls, prime_row: list):
+        """
+        Returns a twelve-tone matrix(two-dimensional 12*12 array)
+        based on a given 12-tone row. 
+        P0 is always the first row([0:0] -> [0:12]) and
+        I0 is always the first column ([0:0] -> [12:0])
+        """
+        if len(prime_row) != 12:
+            print("Warning: row provided is not the right length. (should be 12 tones long)")
+        sorted_row = copy.deepcopy(prime_row)
+        sorted_row.sort()
+        if sorted_row != list(range(12)):
+            print("Warning: the provided tone row is not a valid 12-tone row")
+        matrix = [prime_row]
+        for i in cls.row_inversion(prime_row):
+            if i == prime_row[0]:
+                continue
+            interval = i - prime_row[0]
+            if interval < 0:
+                interval += 12
+            matrix.append(cls.transpose_row(prime_row, interval))
+        return matrix
+    
     @property
     def matrix(self):
         """
-        Returns a two-dimensional 12*12 array
+        Returns a two-dimensional 12*12 array that
         P0 is always the first row([0:0] -> [0:12]) and
         I0 is always the first column ([0:0] -> [12:0])
         """
@@ -336,8 +380,11 @@ class twelve_tone_matrix(tone_row):
         print(self.inversion_order)
         for i in range(12):
             print(self.row_order[i] + str(self.matrix[i]) + self.retrograde_order[i])
+
+class combinatoriality():
     
-    def find_hexachordal_combinatorials(self, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False):
+    @classmethod
+    def find_hexachordal_combinatorials(cls, tone_row: list, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False):
         """
         Returns a list of transformations that that share combinatorial hexachords with the primary row.
         i.e The first 6 notes of every returned transformation are the same as 
@@ -355,83 +402,86 @@ class twelve_tone_matrix(tone_row):
             retrogrades = True
             inversions = True
             inv_retrogrades = True
-        reference_hexachord = self.prime_row[:6]
+        reference_hexachord = tone_row[:6]
         reference_hexachord.sort()
         hexachords = []
         if rows == False and retrogrades == False and inversions == False and inv_retrogrades == False:
                 return None
-            
+        
+        matrix = twelve_tone_matrix()
+        matrix.prime_row = tone_row
         for i in range(12):
             #iterates through rows of matrix
             if i != 0 and rows:
-                trans_row_hexachord = self.matrix[i][:6]
+                trans_row_hexachord = matrix.matrix[i][:6]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(self.row_order[i])
+                    hexachords.append(matrix.row_order[i])
             if retrogrades:
-                trans_row_hexachord = self.matrix[i][6:]
+                trans_row_hexachord = matrix.matrix[i][6:]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(self.retrograde_order[i])
+                    hexachords.append(matrix.retrograde_order[i])
             
             #iterates through columns of matrix
             if inversions:
-                trans_row_hexachord = [self.matrix[x][i] for x in range(6)]
+                trans_row_hexachord = [matrix.matrix[x][i] for x in range(6)]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(self.inversion_order[i])
+                    hexachords.append(matrix.inversion_order[i])
             if inv_retrogrades:
-                trans_row_hexachord = [self.matrix[x][i] for x in range(6,12)]
+                trans_row_hexachord = [matrix.matrix[x][i] for x in range(6,12)]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(self.ret_inv_order[i])
+                    hexachords.append(matrix.ret_inv_order[i])
 
         return hexachords
 
 class note_names():
     @classmethod
     @property
-    def note_name_to_number_relations(cls):
+    def note_to_number_relations(cls):
         """
         Returns a dictionary of note names and their position within 12 ordered semitones.
-        A is arbitrarily chosen to represent position 0
+        'C' represents position 0 in order to conform to MIDI pitch numbering
+        (key = note name,  val = note number)
         """
         return {
-            "Abb": 10,
-            "Ab": 11,
-            "A": 0,
-            "A#": 1,
-            "A##": 2,
-            "Bbb": 0,
-            "Bb": 1,
-            "B": 2,
-            "B#": 3,
-            "B##": 4,
-            "Cbb": 1,
-            "Cb": 2,
-            "C": 3,
-            "C#": 4,
-            "C##": 5,
-            "Dbb": 3,
-            "Db": 4,
-            "D": 5,
-            "D#": 6,
-            "D##": 7,
-            "Ebb": 5,
-            "Eb": 6,
-            "E": 7,
-            "E#": 8,
-            "E##": 9,
-            "Fbb": 6,
-            "Fb": 7,
-            "F": 8,
-            "F#": 9,
-            "F##": 10,
-            "Gbb": 8,
-            "Gb": 9,
-            "G": 10,
-            "G#": 11,
-            "G##": 0,
+            "Abb": 7,
+            "Ab": 8,
+            "A": 9,
+            "A#": 10,
+            "A##": 11,
+            "Bbb": 9,
+            "Bb": 10,
+            "B": 11,
+            "B#": 0,
+            "B##": 1,
+            "Cbb": 10,
+            "Cb": 11,
+            "C": 0,
+            "C#": 1,
+            "C##": 2,
+            "Dbb": 0,
+            "Db": 1,
+            "D": 2,
+            "D#": 3,
+            "D##": 4,
+            "Ebb": 2,
+            "Eb": 3,
+            "E": 4,
+            "E#": 5,
+            "E##": 6,
+            "Fbb": 3,
+            "Fb": 4,
+            "F": 5,
+            "F#": 6,
+            "F##": 7,
+            "Gbb": 5,
+            "Gb": 6,
+            "G": 7,
+            "G#": 8,
+            "G##": 9,
         }
 class intervals(): 
     """
@@ -470,32 +520,32 @@ class intervals():
     @classmethod
     @property
     def second_interval_sizes(cls):
-        return {10: "ddd2", 11 : "dd2", 0: "d2", 1: "m2", 2: "M2", 3: "A2", 4: "AA2"}
+        return {10: "ddd2", 11 : "dd2", 0: "d2", 1: "m2", 2: "M2", 3: "A2", 4: "AA2", 5: "AAA2"}
     
     @classmethod
     @property
     def third_interval_sizes(cls):
-        return {0 : "ddd3", 1 : "dd3", 2: "d3", 3: "m3", 4: "M3", 5: "A3", 6: "AA3"}
+        return {0 : "ddd3", 1 : "dd3", 2: "d3", 3: "m3", 4: "M3", 5: "A3", 6: "AA3", 7: "AAA3"}
     
     @classmethod
     @property
     def fourth_interval_sizes(cls):
-        return {2 : "ddd4", 3 : "dd4", 4: "d4", 5: "P4", 6: "A4", 7: "AA4"}
+        return {2 : "ddd4", 3 : "dd4", 4: "d4", 5: "P4", 6: "A4", 7: "AA4", 8: "AAA4"}
     
     @classmethod
     @property
     def fifth_interval_sizes(cls):
-        return {5 : "dd5", 6: "d5", 7: "P5", 8: "A5", 9: "AA5"}
+        return {4: "ddd5", 5 : "dd5", 6: "d5", 7: "P5", 8: "A5", 9: "AA5", 10: "AAA5"}
     
     @classmethod
     @property
     def sixth_interval_sizes(cls):
-        return {6 : "dd6", 7: "d6", 8: "m6", 9: "M6", 10: "A6", 11: "AA6"}
+        return {5: "ddd6", 6 : "dd6", 7: "d6", 8: "m6", 9: "M6", 10: "A6", 11: "AA6", 0: "AAA6"}
     
     @classmethod
     @property
     def seventh_interval_sizes(cls):
-        return {8 : "dd7", 9: "d7", 10: "m7", 11: "M7", 0: "A7", 1: "AA7"}
+        return {7: "ddd7", 8 : "dd7", 9: "d7", 10: "m7", 11: "M7", 0: "A7", 1: "AA7", 2: "AAA7"}
     
     @classmethod
     def semitone_distance(cls, starting_note: str, direction: str, final_note: str):
@@ -509,13 +559,13 @@ class intervals():
         if direction not in {"up", "down"}:
             print("Invalid direction indicator, direction can either be 'up' or 'down'")
         if direction == "up":
-            semitone_distance = note_names.note_name_to_number_relations[final_note] - note_names.note_name_to_number_relations[starting_note]
+            semitone_distance = note_names.note_to_number_relations[final_note] - note_names.note_to_number_relations[starting_note]
             if semitone_distance < 0:
                 semitone_distance += 12
             return semitone_distance
         
         if direction == "down":
-            semitone_distance = note_names.note_name_to_number_relations[starting_note] - note_names.note_name_to_number_relations[final_note]
+            semitone_distance = note_names.note_to_number_relations[starting_note] - note_names.note_to_number_relations[final_note]
             if semitone_distance < 0:
                 semitone_distance += 12
             return semitone_distance
@@ -612,7 +662,7 @@ class intervals():
         dddd = quadruple-diminished
         """
         
-        for key in note_names.note_name_to_number_relations.keys():
+        for key in note_names.note_to_number_relations.keys():
             if cls.note_interval_name(starting_note, direction, key) == interval_name:
                 return key
 
@@ -620,8 +670,12 @@ class intervals():
 if __name__ == "__main__":
     row = twelve_tone_matrix()
     row.assign_random_row()
-    #row.prime_row = list(range(12))
-    row.display_matrix()
+    row.prime_row = list(range(12))
+    #row.display_matrix()
+    for i in twelve_tone_matrix.twelve_tone_matrix(row.prime_row):
+        print(i)
     print(intervals.semitone_distance("A##", "up", "Abb"))
-    print(intervals.note_interval_name("A##", "up", "Ebb"))
-    print(intervals.get_transposed_note("A", "m7", "down"))
+    print(intervals.note_interval_name("A##", "down", "E##"))
+    print(intervals.get_transposed_note("A#", "m7", "down"))
+    print(tone_row.row_inversion(list(range(12))))
+    print(combinatoriality.find_hexachordal_combinatorials(list(range(12))))
