@@ -246,6 +246,9 @@ class tone_row (object):
         RI1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
         RI6 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
         """
+        if transformation == "P0":
+            return tone_row
+        
         if transformation.startswith("P"):
             return cls.transpose_row(tone_row, int(transformation[1:]))
         
@@ -409,7 +412,7 @@ class twelve_tone_matrix(tone_row):
 class combinatoriality():
     
     @classmethod
-    def find_hexachordal_combinatorials(cls, tone_row: list, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False, include_row = False):
+    def find_hexachordal_combinatorials(cls, tone_row: list, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False):
         """
         Returns a list of transformations that that share combinatorial hexachords with the primary row.
         i.e The first 6 notes of every returned transformation are the same as 
@@ -474,7 +477,7 @@ class note_names():
     def note_to_number_relations(cls):
         """
         Returns a dictionary of note names and their position within 12 ordered semitones.
-        'C' represents position 0 in order to conform to MIDI pitch numbering conventions
+        'C' represents position 0
         (key = note name,  val = note number)
         """
         return {
@@ -522,18 +525,15 @@ class note_names():
         {note number :  note name}
         
         Returns a dictionary of note names and their position within 12 ordered semitones.
-        Every note number that cannot be expressed as a natural is expressed as a sharp.
-        'C' represents position 0 in order to conform to MIDI pitch numbering conventions.
+        Every note name that cannot be expressed as a natural is expressed as a sharp.
+        'C' represents position 0.
         
         Stockhausen proposed this format as a representation for atonal music that makes use
         of twelve equally-distanced semitones to divide an octave. As such, this library makes
-        use of this dictionary as a default representation of note names that are represented
-        by a numerical value.
+        use of this dictionary as a default representation of numerical keys that represent a
+        specific note name.
         """
         return {
-            9 :"A",
-            10 :"A#",
-            11 :"B",
             0 :"C",
             1 :"C#",
             2 :"D",
@@ -543,6 +543,37 @@ class note_names():
             6 :"F#",
             7 :"G",
             8 :"G#",
+            9 :"A",
+            10 :"A#",
+            11 :"B",
+        }
+    
+    @classmethod
+    @property
+    def number_to_sharp_treble_clef_positions(cls):
+        """
+        {note number :  note name}
+        
+        Returns a dictionary of note names(between F4 and E5) that appear between the top and
+        bottom line of a treble clef.
+        Note numbers are ordered to correspond with 12 ordered semitones.
+        Every note name that cannot be expressed as a natural is expressed as a sharp.
+        'C5' represents position 0.
+        
+        """
+        return {
+            0 :"C5",
+            1 :"C#5",
+            2 :"D5",
+            3 :"D#5",
+            4 :"E5",
+            5 :"F4",
+            6 :"F#4",
+            7 :"G4",
+            8 :"G#4",
+            9 :"A4",
+            10 :"A#4",
+            11 :"B5",
         }
 
 class intervals(): 
@@ -736,7 +767,7 @@ class intervals():
             if cls.note_interval_name(starting_note, direction, key) == interval_name:
                 return key
 
-class xml_writer():
+class music_xml_writer():
     
     @classmethod
     def write_twelvetone_report(cls, prime_row: list, file_name: str, directory = None):
@@ -748,25 +779,29 @@ class xml_writer():
         RI0
         (hexachordal combinatorials if they exist)
         
-        Every part's tone row is written in quarter notes
+        
+        Every part's tone row is written in quarter notes between the top and bottom line of
+        the treble clef (between F4 and E5). All notes are written as naturals or sharps(excluding 'E#' and B#').
         """
         if directory is None:
             directory = "./xml_files"
-        if file_name[len(file_name) -3:] != "xml":
-            print(f"Creation error: file name({file_name}) should end with '.xml'")
+        if file_name.endswith(".xml") == False and file_name.endswith(".musicxml") == False:
+            print(f"File creation stopped: file name('{file_name}') should end with '.xml' or '.musicxml'")
             return
+        file_path = f"{directory}/{file_name}"
         part_names = ["P0", "R0", "I0", "RI0"]
-        additional_parts = []
+        part_names += combinatoriality.find_hexachordal_combinatorials(prime_row)
+        part_notes = [tone_row.return_transformation(prime_row, transformation)
+            for transformation in part_names]
+        for note_list in part_notes:
+            for count, note_number in enumerate(note_list):
+                note_list[count] = note_names.number_to_sharp_treble_clef_positions[note_number]
+        for i in part_notes:
+            print(i)
     
 if __name__ == "__main__":
     row = twelve_tone_matrix()
     row.assign_random_row()
     row.prime_row = list(range(12))
     #row.display_matrix()
-    for i in twelve_tone_matrix.twelve_tone_matrix(row.prime_row):
-        print(i)
-    print(intervals.semitone_distance("A##", "up", "Abb"))
-    print(intervals.note_interval_name("A##", "down", "E##"))
-    print(intervals.get_transposed_note("A#", "m7", "down"))
-    print(tone_row.prime_inversion(list(range(12))))
-    print(combinatoriality.find_hexachordal_combinatorials(list(range(12))))
+    music_xml_writer.write_twelvetone_report(row.prime_row, "yo.xml")
