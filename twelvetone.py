@@ -261,8 +261,8 @@ class tone_row (object):
         
         if transformation.startswith("I"):
             return cls.transpose_row(cls.prime_inversion(tone_row), int(transformation[1:]))
-    
-    def find_transformations(self, tone_row: list, find_all = False, row = False, inversion = False,  row_retrograde = False, inv_retrograde = False):
+    @classmethod
+    def find_transformations(cls, prime_row: list, transformed_row: list, find_all = False, row = False, inversion = False,  row_retrograde = False, inv_retrograde = False):
         """
         Returns a list of transformations that apply to the primary row
         """
@@ -273,19 +273,19 @@ class tone_row (object):
             inv_retrograde = True
         transformations = []
         for i in range(12):
-            if row and tone_row == self.transpose_row(self.prime_row, i):
+            if row and transformed_row == cls.transpose_row(prime_row, i):
                 transformations.append(f"P{str(i)}")
             
-            if row_retrograde and tone_row == self.transpose_row(
-                self.pr_retrograde, i):
+            if row_retrograde and transformed_row == cls.transpose_row(
+                cls.prime_retrograde(prime_row), i):
                 transformations.append(f"R{str(i)}")
             
-            if inversion and tone_row == self.transpose_row(
-                self.pr_inversion, i):
+            if inversion and transformed_row == cls.transpose_row(
+                cls.prime_inversion(prime_row), i):
                 transformations.append(f"I{str(i)}")
             
-            if inv_retrograde and tone_row == self.transpose_row(
-                self.pr_retrograde_inversion, i):
+            if inv_retrograde and transformed_row == cls.transpose_row(
+                cls.prime_retrograde_inversion(prime_row), i):
                 transformations.append(f"RI{str(i)}")
             
         return transformations
