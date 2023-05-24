@@ -77,6 +77,7 @@ import random
 import copy
 import numpy as np
 import music21
+import os
 
 class tone_row (object): 
     
@@ -575,6 +576,24 @@ class note_names():
             10 :"A#4",
             11 :"B5",
         }
+    
+    @classmethod
+    def convert_numbers_to_note_names(cls, note_number_list: list, dictionary: dict):
+        """
+        Converts all of the numbers in a tone row(list) or list of tone rows(single-nested list)
+        to note names, based on the provided dictionary.
+        
+        This function does not return a new list, it simply alters the existing list.
+        """
+        if isinstance(note_number_list[0], int):
+            for count, note_number in enumerate(note_number_list):
+                note_number_list[count] = dictionary[note_number]
+            return
+        
+        if isinstance(note_number_list[0], list) and isinstance(note_number_list[0][0], int):
+            for tone_row in note_number_list:
+                for count, note_number in enumerate(tone_row):
+                    tone_row[count] = dictionary[note_number]
 
 class intervals(): 
     """
@@ -770,32 +789,41 @@ class intervals():
 class music_xml_writer():
     
     @classmethod
-    def write_twelvetone_report(cls, prime_row: list, file_name: str, directory = None):
+    def write_twelvetone_report(cls, prime_row: list, file_name: str, directory = None, score_title = None, include_combinatoriality = True):
         """
-        Creates a .xml file with the following pats:
-        P0
-        R0
-        I0
-        RI0
-        (hexachordal combinatorials if they exist)
+        Creates a .musicxml file with parts in the following order:
+        -P0
+        -R0
+        -I0
+        -RI0
+        (if include_combinatoriality = True)
+        -hexachordal combinatorials, if they exist
+        -tetrachordal combinatorials, if they exist
+        -trichordal combinatorials, if they exist
         
         
         Every part's tone row is written in quarter notes between the top and bottom line of
         the treble clef (between F4 and E5). All notes are written as naturals or sharps(excluding 'E#' and B#').
+        
+        If directory is not specified, file will be written in 'xml_files' subfolder in the project file.
         """
+        if directory is not None and os.path.exists(directory) == False:
+            print(f"File creation stopped. Specified directory('{directory}')\n does not exist")
+            return
         if directory is None:
             directory = "./xml_files"
-        if file_name.endswith(".xml") == False and file_name.endswith(".musicxml") == False:
-            print(f"File creation stopped: file name('{file_name}') should end with '.xml' or '.musicxml'")
+        if file_name.endswith(".musicxml") == False:
+            print(f"File creation stopped: file name('{file_name}') should end with '.musicxml'")
             return
+        if score_title is None:
+            score_title = "Analysis of a Twelve-tone Row"
         file_path = f"{directory}/{file_name}"
         part_names = ["P0", "R0", "I0", "RI0"]
-        part_names += combinatoriality.find_hexachordal_combinatorials(prime_row)
-        part_notes = [tone_row.return_transformation(prime_row, transformation)
-            for transformation in part_names]
-        for note_list in part_notes:
-            for count, note_number in enumerate(note_list):
-                note_list[count] = note_names.number_to_sharp_treble_clef_positions[note_number]
+        part_notes = [
+            tone_row.return_transformation(prime_row, transformation)
+            for transformation in part_names
+            ]
+        note_names.convert_numbers_to_note_names(part_notes, note_names.number_to_sharp_treble_clef_positions)
         for i in part_notes:
             print(i)
     
@@ -804,4 +832,6 @@ if __name__ == "__main__":
     row.assign_random_row()
     row.prime_row = list(range(12))
     #row.display_matrix()
-    music_xml_writer.write_twelvetone_report(row.prime_row, "yo.xml")
+    music_xml_writer.write_twelvetone_report(row.prime_row, "test_file.musicxml")
+    for i in []:
+        print(note_names.note_to_number_relations[i])
