@@ -1,4 +1,9 @@
 """
+This library is designed for the creation, analysis and graphic representation of 12-tone music.
+
+
+SHORT INTRODUCTION
+====================
 In Western music, the octave is divided into twelve equal parts that correspond to specific notes.
 This means that there are a total of 12 unique notes. 
 
@@ -184,6 +189,17 @@ class tone_row (object):
         return pr_ret_inv
     
     @classmethod
+    def prime_transformations_list(cls, prime_row: list, include_prime_row = True):
+        """
+        Returns a list of all prime transformations of a given row
+        in the following order:
+        [P0, R0, I0, RI0]
+        """
+        if include_prime_row:
+            return [prime_row, cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)]
+        return [cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)]
+    
+    @classmethod
     def transpose_row(cls, tone_row: list, semitones: int):
         """
         Moves all notes in a tone row up(positive int) or down(negative int) by a 
@@ -203,7 +219,7 @@ class tone_row (object):
         return transposed_row
     
     @classmethod
-    def return_transformation(cls, tone_row: list, transformation: str):
+    def get_transformation(cls, tone_row: list, transformation: str):
         """
         Transposition of a tone row occurs when all notes are moved up or
         down by the same amount of semitones.
@@ -261,6 +277,7 @@ class tone_row (object):
         
         if transformation.startswith("I"):
             return cls.transpose_row(cls.prime_inversion(tone_row), int(transformation[1:]))
+        
     @classmethod
     def find_transformations(cls, prime_row: list, transformed_row: list, find_all = False, row = False, inversion = False,  row_retrograde = False, inv_retrograde = False):
         """
@@ -807,25 +824,37 @@ class music_xml_writer():
         
         If directory is not specified, file will be written in 'xml_files' subfolder in the project file.
         """
-        if directory is not None and os.path.exists(directory) == False:
-            print(f"File creation stopped. Specified directory('{directory}')\n does not exist")
-            return
-        if directory is None:
-            directory = "./xml_files"
-        if file_name.endswith(".musicxml") == False:
-            print(f"File creation stopped: file name('{file_name}') should end with '.musicxml'")
+        file_path = cls.create_file_path(directory, file_name)
+        if file_path is None:
             return
         if score_title is None:
             score_title = "Analysis of a Twelve-tone Row"
-        file_path = f"{directory}/{file_name}"
         part_names = ["P0", "R0", "I0", "RI0"]
-        part_notes = [
-            tone_row.return_transformation(prime_row, transformation)
-            for transformation in part_names
-            ]
+        part_notes = tone_row.prime_transformations_list(prime_row)
         note_names.convert_numbers_to_note_names(part_notes, note_names.number_to_sharp_treble_clef_positions)
         for i in part_notes:
             print(i)
+    
+    @classmethod
+    def create_file_path(cls, directory, file_name):
+        """
+        Returns a file path(including the .musicxml file) as a normalized string.
+        
+        If directory = None, the function will create a directory within the project
+        sub folder('xml_files')
+        """
+        if directory is not None:
+            directory = os.path.normpath(directory)
+            if os.path.exists(directory) == False:
+                print(f"File creation stopped. Specified directory('{directory}')\n does not exist")
+                return 
+        if directory is None:
+            directory = os.path.normpath(".\\xml_files")
+        if file_name.endswith(".musicxml") == False:
+            print(f"File creation stopped: file name('{file_name}') should end with '.musicxml'")
+            return
+        file_name = os.path.normpath(f"\\{file_name}")
+        return os.path.join(directory, file_name)
     
 if __name__ == "__main__":
     row = twelve_tone_matrix()
