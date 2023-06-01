@@ -106,16 +106,6 @@ class tone_row (object):
         random_tone_row = list(range(12))
         random.shuffle(random_tone_row)
         self.prime_row = random_tone_row
-
-    @property
-    def pr_retrograde(self):
-        """
-        Returns R0
-        """
-        pr_retrograde = copy.deepcopy(self.prime_row)
-        pr_retrograde.reverse()
-        pr_retrograde = self.transpose_row(pr_retrograde, self.prime_row[0] - pr_retrograde[0])
-        return pr_retrograde
     
     @classmethod
     def prime_retrograde(cls, prime_row: list):
@@ -129,23 +119,6 @@ class tone_row (object):
         pr_retrograde = cls.transpose_row(pr_retrograde, prime_row[0] - pr_retrograde[0])
         return pr_retrograde
 
-    @property
-    def pr_inversion(self):
-        """
-        Returns I0
-        """
-        row_inversion = [self.prime_row[0]]
-        
-        for i in range(1,12):
-            semitones = self.prime_row[i] - self.prime_row[i-1]
-            row_inversion.append(row_inversion[i-1] - semitones)
-            if row_inversion[i] > 11:
-                row_inversion[i] -= 12
-                continue
-            if row_inversion[i] < 0:
-                row_inversion[i] += 12
-        
-        return row_inversion
     
     @classmethod
     def prime_inversion(cls, prime_row: list):
@@ -164,16 +137,6 @@ class tone_row (object):
                 row_inversion[i] += 12
         
         return row_inversion
-    
-    @property
-    def pr_retrograde_inversion(self):
-        """
-        Returns RI0
-        """
-        pr_ret_inv = copy.deepcopy(self.pr_inversion)
-        pr_ret_inv.reverse()
-        pr_ret_inv = self.transpose_row(pr_ret_inv, self.prime_row[0] -pr_ret_inv[0])
-        return pr_ret_inv
     
     @classmethod
     def prime_retrograde_inversion(cls, prime_row: list):
@@ -591,7 +554,7 @@ class note_names():
             8 :"G#4",
             9 :"A4",
             10 :"A#4",
-            11 :"B5",
+            11 :"B4",
         }
     
     @classmethod
@@ -808,15 +771,15 @@ class music_xml_writer():
     @classmethod
     def write_twelvetone_report(cls, prime_row: list, file_name: str, directory = None, score_title = None, include_combinatoriality = True):
         """
-        Creates a .musicxml file with parts in the following order:
-        -P0
-        -R0
-        -I0
-        -RI0
-        (if include_combinatoriality = True)
-        -hexachordal combinatorials, if they exist
-        -tetrachordal combinatorials, if they exist
-        -trichordal combinatorials, if they exist
+        Creates a .musicxml file with parts in the following order:\n
+        -P0\n
+        -R0\n
+        -I0\n
+        -RI0\n
+        (if include_combinatoriality = True)\n
+        -hexachordal combinatorials, if they exist\n
+        -tetrachordal combinatorials, if they exist\n
+        -trichordal combinatorials, if they exist\n
         
         
         Every part's tone row is written in quarter notes between the top and bottom line of
@@ -830,10 +793,26 @@ class music_xml_writer():
         if score_title is None:
             score_title = "Analysis of a Twelve-tone Row"
         part_names = ["P0", "R0", "I0", "RI0"]
+        full_score = music21.stream.Score()
+        measure = music21.stream.Measure()
+        measure.timeSignature = music21.meter.TimeSignature('12/4')
+        measure.timeSignature.style.hideObjectOnPrint = True
+        prime_row_part = music21.stream.Part()
+        prime_row_part.partName = "P0"
+        pr_part_notes = copy.deepcopy(prime_row)
+        note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
         part_notes = tone_row.prime_transformations_list(prime_row)
+        for pitch in pr_part_notes:
+            note = music21.note.Note(pitch)
+            note.stemDirection = "noStem"
+            measure.append(note)
+        prime_row_part.append(measure)
+        
+        full_score.append(prime_row_part)
+        full_score.insert(0, music21.metadata.Metadata(title = score_title, composer = ""))
+        full_score.write("musicxml", f"./xml_files/{file_name}")
         note_names.convert_numbers_to_note_names(part_notes, note_names.number_to_sharp_treble_clef_positions)
-        for i in part_notes:
-            print(i)
+        print("\n=========================\nFile successfully created\n=========================")
     
     @classmethod
     def create_file_path(cls, directory, file_name):
@@ -849,11 +828,8 @@ class music_xml_writer():
                 print(f"File creation stopped. Specified directory('{directory}')\n does not exist")
                 return 
         if directory is None:
-            directory = os.path.normpath(".\\xml_files")
-        if file_name.endswith(".musicxml") == False:
-            print(f"File creation stopped: file name('{file_name}') should end with '.musicxml'")
-            return
-        file_name = os.path.normpath(f"\\{file_name}")
+            directory = os.path.normpath("/xml_files/")
+        file_name = os.path.normpath(f"{file_name}")
         return os.path.join(directory, file_name)
     
 if __name__ == "__main__":
@@ -861,6 +837,6 @@ if __name__ == "__main__":
     row.assign_random_row()
     row.prime_row = list(range(12))
     #row.display_matrix()
-    music_xml_writer.write_twelvetone_report(row.prime_row, "test_file.musicxml")
+    music_xml_writer.write_twelvetone_report(row.prime_row, "test_file")
     for i in []:
         print(note_names.note_to_number_relations[i])
