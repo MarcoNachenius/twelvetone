@@ -41,13 +41,19 @@ Creating a tone-row by inversion is achieved by reversing distance of traversal 
 
 For example, if we take the tone-row [2,5,1,6,7,9,4,11,10,3,8,0] the distances between notes may be expressed as follows:
 
- (+3) (-4) (+5) (+1) (+2) (-5) (-5)  (-1)  (+5) (+5) (+4)
+2 (+3)
+5 (-4)
+1 (+5)
+6 (+1)
+7 (+2)
+9 (-5)
+4 (-5)
+11 (-1) 
+10 (+5)
+3 (+5)
+8 (+4)
+0
 
-  |    |    |    |    |    |    |     |     |    |    |
-
-  v    v    v    v    v    v    v     v     v    v    v
-  
-2    5    1    6    7    9    4    11    10    3    8    0\n
 
 By reversing the traversal of distance between every note, the inversion is generated as follows:
  (-3)  (+4) (-5)  (-1) (-2) (+5) (+5) (+1) (-5) (-5) (-4)
