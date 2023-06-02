@@ -155,7 +155,7 @@ class tone_row (object):
     def prime_transformations_list(cls, prime_row: list, include_prime_row = True):
         """
         Returns a list of all prime transformations of a given row
-        in the following order:
+        in the following order:\n
         [P0, R0, I0, RI0]
         """
         if include_prime_row:
@@ -185,49 +185,58 @@ class tone_row (object):
     def get_transformation(cls, tone_row: list, transformation: str):
         """
         Transposition of a tone row occurs when all notes are moved up or
-        down by the same amount of semitones.
+        down by the same amount of semitones.\n
         
-        'P' refers to a specific transposition of the prime row.
-        'P0' is the prime row(first row of the matrix)
+        'P' refers to a specific transposition of the prime row.\n
+        'P0' is the prime row(first row of the matrix)\n
         
-        'I' refers to a specific inversion of the prime row.
-        'I0' is the prime row(first row of the matrix)
+        'I' refers to a specific inversion of the prime row.\n
+        'I0' is the prime row(first row of the matrix)\n
         
-        'R' refers to a specific retrograde(reverse order) of the prime row.
-        'R0' is the retrograde of the prime row(prime row in reverse order)
+        'R' refers to a specific retrograde(reverse order) of the prime row.\n
+        'R0' is the retrograde of the prime row(prime row in reverse order)\n
         
-        'RI' refers to a specific retrograde of the prime row's inversion.
-        'RI0' is the retrograde of the prime row's inversion(first column of the matrix read from down to up)
+        'RI' refers to a specific retrograde of the prime row's inversion.\n
+        'RI0' is the retrograde of the prime row's inversion(first column of the matrix read from down to up)\n
         
-        For example, consider the matrix of the tone row [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:
+        For example, consider the matrix of the tone row [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:\n
         
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-        [11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
-        [10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
-        [9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8]
-        [8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7]
-        [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]
-        [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
-        [5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4]
-        [4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3]
-        [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2]
-        [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
+        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]\n
+        [11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n
+        [10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n
+        [9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8]\n
+        [8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7]\n
+        [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]\n
+        [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]\n
+        [5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4]\n
+        [4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3]\n
+        [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2]\n
+        [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]\n
+        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]\n
         
         Here are some examples of how specific transpositions are written
-        and what their values are:
+        and what their values are:\n
         
-        P0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
-        T7 = [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]
-        I0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-        I6 = [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7]
-        R11 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
-        R0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
-        RI1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
-        RI6 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
+        P0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]\n
+        T7 = [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]\n
+        I0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]\n
+        I6 = [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7]\n
+        R11 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]\n
+        R0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]\n
+        RI1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]\n
+        RI6 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]\n
         """
         if transformation == "P0":
             return tone_row
+        
+        if transformation == "R0":
+            return cls.prime_retrograde(tone_row)
+        
+        if transformation == "I0":
+            return cls.prime_inversion(tone_row)
+        
+        if transformation == "RI0":
+            return cls.prime_retrograde_inversion(tone_row)
         
         if transformation.startswith("P"):
             return cls.transpose_row(tone_row, int(transformation[1:]))
@@ -244,7 +253,8 @@ class tone_row (object):
     @classmethod
     def find_transformations(cls, prime_row: list, transformed_row: list, find_all = False, row = False, inversion = False,  row_retrograde = False, inv_retrograde = False):
         """
-        Returns a list of transformations that apply to the primary row
+        Returns a list of transformations that apply to the primary row in relation to 
+        a given tone row.
         """
         if find_all:
             row = True
@@ -276,7 +286,7 @@ class twelve_tone_matrix(tone_row):
         tone_row.__init__(self)
     
     @classmethod
-    def twelve_tone_matrix(cls, prime_row: list):
+    def generate_twelve_tone_matrix(cls, prime_row: list):
         """
         Returns a twelve-tone matrix(two-dimensional 12*12 array)
         based on a given 12-tone row. 
@@ -299,82 +309,65 @@ class twelve_tone_matrix(tone_row):
             matrix.append(cls.transpose_row(prime_row, interval))
         return matrix
     
-    @property
-    def matrix(self):
-        """
-        Returns a two-dimensional 12*12 array that
-        P0 is always the first row([0:0] -> [0:12]) and
-        I0 is always the first column ([0:0] -> [12:0])
-        """
-        matrix = [self.prime_row]
-        for i in self.pr_inversion:
-            if i == self.prime_row[0]:
-                continue
-            interval = i - self.prime_row[0]
-            if interval < 0:
-                interval += 12
-            matrix.append(self.transpose_row(self.prime_row, interval))
-        return matrix
-        
-
-    
-    @property
-    def row_order(self):
+    @classmethod
+    def row_order(cls, prime_row):
         """
         Returns the order of row transpositions of 
         the 12-tone matrix from top to bottom
         """
         row_order = ["P0"]
-        reference_note = self.prime_row[0]
+        reference_note = prime_row[0]
+        prime_inversion = tone_row.prime_inversion(prime_row)
         for i in range(1, 12):
-            semitones_up = self.pr_inversion[i] - reference_note
+            semitones_up = prime_inversion[i] - reference_note
             if semitones_up < 0:
                 semitones_up += 12
             row_order.append(f"P{str(semitones_up)}")
         return row_order
     
-    @property
-    def retrograde_order(self):
+    @classmethod
+    def retrograde_order(cls, prime_row):
         """
         Returns the order of retrograde transpositions of 
         the 12-tone matrix from top to bottom
         """
         row_order = []
-        ret_row = [i[11] for i in self.matrix]
-        reference_note = self.prime_row[0]
+        tt_matrix = cls.generate_twelve_tone_matrix(prime_row)
+        last_column = [i[11] for i in tt_matrix]
+        reference_note = prime_row[0]
         for i in range(12):
-            semitones_up = ret_row[i] - reference_note
+            semitones_up = last_column[i] - reference_note
             if semitones_up < 0:
                 semitones_up += 12
             row_order.append(f"R{str(semitones_up)}")
         return row_order
     
-    @property
-    def inversion_order(self):
+    @classmethod
+    def inversion_order(cls, prime_row):
         """
         Returns the order of inversion transpositions of 
         the 12-tone matrix from left to right
         """
         row_order = ["I0"]
         #The first row of the 12-tone matrix represents the first note of every inversion
-        reference_note = self.prime_row[0]
+        reference_note = prime_row[0]
         for i in range(1, 12):
-            semitones_up = self.prime_row[i] - reference_note
+            semitones_up = prime_row[i] - reference_note
             if semitones_up < 0:
                 semitones_up += 12
             row_order.append(f"I{str(semitones_up)}")
         return row_order
     
-    @property
-    def ret_inv_order(self):
+    @classmethod
+    def retrograde_inversion_order(cls, prime_row):
         """
         Returns the order of retrograde inversion transpositions of 
         the 12-tone matrix from left to right
         """
         row_order = []
         #The last row of the 12-tone matrix represents the first note of every retrograde inversion
-        ret_inv_row = self.matrix[11]
-        reference_note = self.prime_row[0]
+        ret_inv_row = cls.generate_twelve_tone_matrix(prime_row)[11]
+        reference_note = prime_row[0]
         for i in range(12):
             semitones_up = ret_inv_row[i] - reference_note
             if semitones_up < 0:
@@ -447,7 +440,7 @@ class combinatoriality():
                 trans_row_hexachord = [matrix.matrix[x][i] for x in range(6,12)]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(matrix.ret_inv_order[i])
+                    hexachords.append(matrix.retrograde_inversion_order[i])
 
         return hexachords
 
