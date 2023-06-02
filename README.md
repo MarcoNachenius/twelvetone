@@ -39,10 +39,14 @@ can be generated from the primary tone-row by means of inversion.
 Creating a tone-row by inversion is achieved by reversing distance of traversal between every note of a tone row. 
 
 
-For example, if we take the tone-row [2,5,1,6,7,9,4,11,10,3,8,0] the distances between notes may be expressed as follows:\n
- (+3) (-4) (+5) (+1) (+2) (-5) (-5)  (-1)  (+5) (+5) (+4)\n
-  |    |    |    |    |    |    |     |     |    |    |\n
-  v    v    v    v    v    v    v     v     v    v    v\n
+For example, if we take the tone-row [2,5,1,6,7,9,4,11,10,3,8,0] the distances between notes may be expressed as follows:
+
+ (+3) (-4) (+5) (+1) (+2) (-5) (-5)  (-1)  (+5) (+5) (+4)
+
+  |    |    |    |    |    |    |     |     |    |    |
+
+  v    v    v    v    v    v    v     v     v    v    v
+  
 2    5    1    6    7    9    4    11    10    3    8    0\n
 
 By reversing the traversal of distance between every note, the inversion is generated as follows:
