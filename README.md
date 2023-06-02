@@ -12,7 +12,7 @@ The reader only needs to understand how this principle works on a numerical leve
 
 Notes are ordered incrementally,
 i.e. [0,1,2,3,4,5,6,7,8,9,10,11] = [C,C#,D,D#,E,F,Gb,G,G#,A,Bb,B]  
-    ('C' is arbitrarily chosen as note 0 in this example)
+    ('C' was chosen as note 0 in order to conform to MIDI pitch numbering)
 
 This series of notes repeats itself once the end of the index is reached. i.e. 
 ...0,1,2,3,4,5,6,7,8,9,10,11,0,1,2,3,4,5,6,7,8,9,10,11,0,1,2,3,4,5,6,7,8,9,10,11...
