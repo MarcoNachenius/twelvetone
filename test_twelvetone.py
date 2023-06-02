@@ -22,6 +22,20 @@ class test_tone_row(unittest.TestCase):
         self.assertEqual(tritone_up, [0, 4, 11, 9, 10, 1, 3, 6, 8, 2, 5, 7])
         self.assertEqual(tritone_down, [0, 4, 11, 9, 10, 1, 3, 6, 8, 2, 5, 7])
     
+    def test_return_transformation(self):
+        tc_tone_row = tt.tone_row()
+        tc_tone_row.prime_row = list(range(12))
+        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "P0"), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
+        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "P7"), [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6])
+        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "I0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "I6"), [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7])
+        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "R11"), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
+        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "R0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
+        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "RI1"), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0])
+        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "RI6"), [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5])
+    
+class test_twelve_tone_matrix(unittest.TestCase):
+    
     def test_matrix(self):
         prime_row = [2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0]
         self.assertEqual(tt.twelve_tone_matrix.generate_twelve_tone_matrix(prime_row),
@@ -38,34 +52,19 @@ class test_tone_row(unittest.TestCase):
                                             [8, 11, 7, 0, 1, 3, 10, 5, 4, 9, 2, 6], 
                                             [4, 7, 3, 8, 9, 11, 6, 1, 0, 5, 10, 2]])
     
-    def test_return_transformation(self):
-        tc_tone_row = tt.tone_row()
-        tc_tone_row.prime_row = list(range(12))
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "P0"), [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "P7"), [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6])
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "I0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "I6"), [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7])
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "R11"), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "R0"), [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "RI1"), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0])
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "RI6"), [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5])
-    
     def test_find_transformations(self):
-        tc_matrix = tt.twelve_tone_matrix(list(range(12)))
-        tc_matrix.prime_row = list(range(12))
-        
-        self.assertEqual(tt.tone_row.find_transformations(tc_matrix.prime_row, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], row=True), ["P0"])
-        self.assertEqual(tt.tone_row.find_transformations(tc_matrix.prime_row, [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6], row=True), ["P7"])
-        self.assertEqual(tt.tone_row.find_transformations(tc_matrix.prime_row, [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1], inversion=True), ["I0"])
-        self.assertEqual(tt.tone_row.find_transformations(tc_matrix.prime_row, [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7], inversion=True), ["I6"])
-        self.assertEqual(tt.tone_row.find_transformations(tc_matrix.prime_row, [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], row_retrograde=True), ["R11"])
-        self.assertEqual(tt.tone_row.find_transformations(tc_matrix.prime_row, [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1], row_retrograde=True), ["R0"])
-        self.assertEqual(tt.tone_row.find_transformations(tc_matrix.prime_row, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0], inv_retrograde=True), ["RI1"])
-        self.assertEqual(tt.tone_row.find_transformations(tc_matrix.prime_row, [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5], find_all=True), ["P6", "RI6"])
+        prime_row = list(range(12))
+        self.assertEqual(tt.tone_row.find_transformations(prime_row, [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], row=True), ["P0"])
+        self.assertEqual(tt.tone_row.find_transformations(prime_row, [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6], row=True), ["P7"])
+        self.assertEqual(tt.tone_row.find_transformations(prime_row, [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1], inversion=True), ["I0"])
+        self.assertEqual(tt.tone_row.find_transformations(prime_row, [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7], inversion=True), ["I6"])
+        self.assertEqual(tt.tone_row.find_transformations(prime_row, [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0], row_retrograde=True), ["R11"])
+        self.assertEqual(tt.tone_row.find_transformations(prime_row, [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1], row_retrograde=True), ["R0"])
+        self.assertEqual(tt.tone_row.find_transformations(prime_row, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0], inv_retrograde=True), ["RI1"])
+        self.assertEqual(tt.tone_row.find_transformations(prime_row, [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5], find_all=True), ["P6", "RI6"])
     
     def test_row_orders(self): 
         prime_row = list(range(12))
-        
         self.assertEqual(tt.twelve_tone_matrix.row_order(prime_row), ["P0", "P11", "P10", "P9", "P8", "P7", "P6", "P5", "P4", "P3", "P2", "P1"])
         self.assertEqual(tt.twelve_tone_matrix.retrograde_order(prime_row), ["R11", "R10", "R9", "R8", "R7", "R6", "R5", "R4", "R3", "R2", "R1", "R0"])
         self.assertEqual(tt.twelve_tone_matrix.inversion_order(prime_row), ["I0", "I1", "I2", "I3", "I4", "I5", "I6", "I7", "I8", "I9", "I10", "I11"])

@@ -386,21 +386,16 @@ class twelve_tone_matrix(tone_row):
 class combinatoriality():
     
     @classmethod
-    def find_hexachordal_combinatorials(cls, tone_row: list, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False):
+    def find_hexachordal_combinatorials(cls, prime_row: list, find_all = True, rows=False, retrogrades=False, inversions=False, inv_retrogrades=False):
         """
         Returns a list of transformations that that share combinatorial hexachords with the primary row.
         i.e The first 6 notes of every returned transformation are the same as 
-        the first 6 notes of the prime row, regardless of order.
-        
-        If include_tone_row is set to True, the function will return a list of 
-        the transformation of the tone row that shares hexachordal combinatoriality, 
-        followed by 
+        the first 6 notes of the prime row, regardless of order.\n
         
         If any specific transformations (rows, retrogrades, etc.) are declared as True
-        when the function is invoked
-        the function will search for them only.
+        when the function is invoked, the function will search for them only.\n
         
-        Returns an empty list if no hexachordal combinatorials exist.
+        Returns an empty list if no hexachordal combinatorials exist.\n
         """
         if rows or retrogrades or inversions or inv_retrogrades:
             find_all == False
@@ -409,38 +404,37 @@ class combinatoriality():
             retrogrades = True
             inversions = True
             inv_retrogrades = True
-        reference_hexachord = tone_row[:6]
+        reference_hexachord = prime_row[:6]
         reference_hexachord.sort()
         hexachords = []
         if rows == False and retrogrades == False and inversions == False and inv_retrogrades == False:
                 return None
         
-        matrix = twelve_tone_matrix()
-        matrix.prime_row = tone_row
+        tt_matrix = twelve_tone_matrix.generate_twelve_tone_matrix(prime_row)
         for i in range(12):
             #iterates through rows of matrix
             if i != 0 and rows:
-                trans_row_hexachord = matrix.matrix[i][:6]
+                trans_row_hexachord = tt_matrix[i][:6]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(matrix.row_order[i])
+                    hexachords.append(twelve_tone_matrix.row_order(prime_row)[i])
             if retrogrades:
-                trans_row_hexachord = matrix.matrix[i][6:]
+                trans_row_hexachord = tt_matrix[i][6:]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(matrix.retrograde_order[i])
+                    hexachords.append(twelve_tone_matrix.retrograde_order(prime_row)[i])
             
             #iterates through columns of matrix
             if inversions:
-                trans_row_hexachord = [matrix.matrix[x][i] for x in range(6)]
+                trans_row_hexachord = [tt_matrix[x][i] for x in range(6)]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(matrix.inversion_order[i])
+                    hexachords.append(twelve_tone_matrix.inversion_order(prime_row)[i])
             if inv_retrogrades:
-                trans_row_hexachord = [matrix.matrix[x][i] for x in range(6,12)]
+                trans_row_hexachord = [tt_matrix[x][i] for x in range(6,12)]
                 trans_row_hexachord.sort()
                 if trans_row_hexachord == reference_hexachord:
-                    hexachords.append(matrix.retrograde_inversion_order[i])
+                    hexachords.append(twelve_tone_matrix.retrograde_inversion_order(prime_row)[i])
 
         return hexachords
 
@@ -826,10 +820,11 @@ class music_xml_writer():
         return os.path.join(directory, file_name)
     
 if __name__ == "__main__":
-    row = twelve_tone_matrix()
-    row.assign_random_row()
-    row.prime_row = list(range(12))
+    prime_row = list(range(12))
+    for i in twelve_tone_matrix.generate_twelve_tone_matrix(prime_row):
+        print(i)
+    print(combinatoriality.find_hexachordal_combinatorials(prime_row))
     #row.display_matrix()
-    music_xml_writer.write_twelvetone_report(row.prime_row, "test_file")
-    for i in []:
-        print(note_names.note_to_number_relations[i])
+    #music_xml_writer.write_twelvetone_report(row.prime_row, "test_file")
+    #for i in []:
+    #    print(note_names.note_to_number_relations[i])
