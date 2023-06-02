@@ -32,7 +32,7 @@ certain number of steps in the aforementioned repeating series.
 In the 1920's Arnold Schoenberg invented a form of composition named 12-tone serialism.
 This form of composition has one fundamental principle:
 if a specific note is used, all other 11 notes must be used before it may be used again.
-This gave rise to the use of a tone-row. A tone-row is a pre-selected set of 12 unique notes. 
+This gave rise to the use of a tone-row. A tone-row is a pre-selected permutation of 12 unique notes. 
 
 Schoenberg found that a different, yet invariably related tone-row consisting of 12 unique notes that
 can be generated from the primary tone-row by means of inversion. 
