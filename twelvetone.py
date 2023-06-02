@@ -753,7 +753,7 @@ class intervals():
             if cls.note_interval_name(starting_note, direction, key) == interval_name:
                 return key
 
-class music_xml_writer():
+class music_xml_writer():#WIP
     
     @classmethod
     def write_twelvetone_report(cls, prime_row: list, file_name: str, directory = None, score_title = None, include_combinatoriality = True):

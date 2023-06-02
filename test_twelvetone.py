@@ -74,11 +74,19 @@ class test_intervals(unittest.TestCase):
 
     def test_semitone_distance(self):
         self.assertEqual(tt.intervals.semitone_distance("A", "up", "A#"), 1)
+        self.assertEqual(tt.intervals.semitone_distance("A", "up", "G#"), 11)
     
     def test_note_interval_name(self):
         self.assertEqual(tt.intervals.note_interval_name("A##", "down", "E##"), "P4")
     
     def test_get_transposed_note(self):
         self.assertEqual(tt.intervals.get_transposed_note("A#", "m7", "down"), "B#")
+
+class test_combinatoriality(unittest.TestCase):
+    
+    def test_find_hexachordal_combinatoriality(self):
+        prime_row = list(range(12))
+        tc_hex_comb = tt.combinatoriality.find_hexachordal_combinatorials(prime_row)
+        self.assertEqual(tc_hex_comb, ['I5', 'R5', 'RI0'])
 if __name__ == '__main__':
     unittest.main()
