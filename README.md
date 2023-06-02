@@ -14,11 +14,11 @@ Notes are ordered incrementally,
 i.e. [0,1,2,3,4,5,6,7,8,9,10,11] = [C,C#,D,D#,E,F,Gb,G,G#,A,Bb,B]  
     ('C' is arbitrarily chosen as note 0 in this example)
 
-The distance between two notes is measured in semitones. For example,
-note 5 is two semitones higher than note 3 or four semitones lower than note 9.
-
 This series of notes repeats itself once the end of the index is reached. i.e. 
 ...0,1,2,3,4,5,6,7,8,9,10,11,0,1,2,3,4,5,6,7,8,9,10,11,0,1,2,3,4,5,6,7,8,9,10,11...
+
+The distance between two notes is measured in semitones. For example,
+note 5 is two semitones higher than note 3 or four semitones lower than note 9.
 
 For example, note 1 can be understood to be two semitones above 11
 and three semitones below 10. This should lead the reader to the conclusion that
