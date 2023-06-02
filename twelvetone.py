@@ -6,7 +6,7 @@ import os
 
 class tone_row (object): 
     
-    def __init__(self, tone_row=None, *args, **kwargs):
+    def __init__(self, tone_row = None, *args, **kwargs):
         if tone_row is None:
             tone_row = []
         self.__prime_row = tone_row
@@ -18,14 +18,46 @@ class tone_row (object):
     @prime_row.setter
     def prime_row(self, tone_row: list):
         self.__prime_row = tone_row
+    
+    @classmethod
+    def convert_note_to_numbers(cls, first_note: str,
+                                second_note: str,
+                                third_note: str,
+                                fourth_note: str,
+                                fifth_note: str,
+                                sixth_note: str,
+                                seventh_note: str,
+                                eighth_note: str,
+                                ninth_note: str,
+                                tenth_note: str,
+                                eleventh_note: str,
+                                twelfth_note: str):
+        """
+        Converts arguments(note names of tone row) into a list of numerical values that correspond to
+        the project's numerical convention for note names("C" = 0, "C#"/"Db" = 1, "D" = 2, etc).
         
-    def assign_random_row(self):
+        Note names are to be entered in uppercase. 
+        
+        Accidental symbols:
+        "#" = sharp
+        "b" = flat
+        "##" = double-sharp
+        "bb" = double-flat
+        """
+        numerical_list = [first_note, second_note, third_note, fourth_note, fifth_note, sixth_note, seventh_note, eighth_note, ninth_note, tenth_note, eleventh_note, twelfth_note]
+        for i, note in enumerate(numerical_list):
+            numerical_list[i] = note_names.note_to_number_relations[note]
+        return numerical_list
+        
+
+    @classmethod
+    def generate_random_row(cls):
         """
         Assigns a random 12-tone row as the primary row(P0).
         """
         random_tone_row = list(range(12))
         random.shuffle(random_tone_row)
-        self.prime_row = random_tone_row
+        return random_tone_row
     
     @classmethod
     def prime_retrograde(cls, prime_row: list):
@@ -175,7 +207,16 @@ class tone_row (object):
         """
         Returns a list of transformations that apply to the primary row in relation to 
         a given tone row.
+        
+        By default, this function will search for all transformations.
+        (i.e. find_all = True)
+        
+        If any specific transformations(row, inversion, row_inversion, inv_retrograde) are
+        declared as True when this function is invoked, the function will search for them only. 
         """
+        if row or inversion or row_retrograde or inv_retrograde:
+            find_all = False
+        
         if find_all:
             row = True
             inversion = True 
@@ -201,9 +242,6 @@ class tone_row (object):
         return transformations
 
 class twelve_tone_matrix(tone_row):
-    
-    def __init__(self, *args, **kwargs):
-        tone_row.__init__(self)
     
     @classmethod
     def generate_twelve_tone_matrix(cls, prime_row: list):
@@ -473,14 +511,14 @@ class note_names():
         This function does not return a new list, it simply alters the existing list.
         """
         if isinstance(note_number_list[0], int):
-            for count, note_number in enumerate(note_number_list):
-                note_number_list[count] = dictionary[note_number]
+            for i, note_number in enumerate(note_number_list):
+                note_number_list[i] = dictionary[note_number]
             return
         
         if isinstance(note_number_list[0], list) and isinstance(note_number_list[0][0], int):
             for tone_row in note_number_list:
-                for count, note_number in enumerate(tone_row):
-                    tone_row[count] = dictionary[note_number]
+                for i, note_number in enumerate(tone_row):
+                    tone_row[i] = dictionary[note_number]
 
 class intervals(): 
     """
@@ -740,7 +778,7 @@ class music_xml_writer():#WIP
         return os.path.join(directory, file_name)
     
 if __name__ == "__main__":
-    prime_row = list(range(12))
+    prime_row = tone_row.generate_random_row()
     for i in twelve_tone_matrix.generate_twelve_tone_matrix(prime_row):
         print(i)
     print(combinatoriality.find_hexachordal_combinatorials(prime_row))
