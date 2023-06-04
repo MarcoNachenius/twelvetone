@@ -19,30 +19,30 @@
     </scaling>
   </defaults>
   <part-list>
-    <score-part id="Pbd6b419fef507986fb3ba7a89d674439">
+    <score-part id="P4fbd80f8d4e65ae980672923b87162c2">
       <part-name>P0</part-name>
     </score-part>
-    <score-part id="P88711b020cc71e12364fdbde9ff4a6e1">
+    <score-part id="P328955af932995d7d11bf11174ea3e75">
       <part-name>R0</part-name>
     </score-part>
-    <score-part id="Pff24d1b4dbd9df7524ce2e675e91a167">
+    <score-part id="P13a5cc9af818661d6b361dcf8e5aa827">
       <part-name>I0</part-name>
     </score-part>
-    <score-part id="P4fcda43d792461d663bcf191c7de5ccb">
+    <score-part id="P626cac33dfa46a665a34d30a17ed5be4">
       <part-name>RI0</part-name>
     </score-part>
-    <score-part id="P22d762654a6f3aef39343ed88646d9f7">
+    <score-part id="Pfdc3edfde21b48209a4ade1f0e6cd188">
       <part-name>I5</part-name>
     </score-part>
-    <score-part id="P075179c439160578ab6bc47c57cb8fd8">
+    <score-part id="Pf6d879e0d93334b5978dfa373471aa90">
       <part-name>R5</part-name>
     </score-part>
-    <score-part id="P344ff1600931b6595fd5a3762eee002f">
+    <score-part id="P418d78fc9050f1ca7dc6f2d57a94ceb6">
       <part-name>RI0</part-name>
     </score-part>
   </part-list>
   <!--=========================== Part 1 ===========================-->
-  <part id="Pbd6b419fef507986fb3ba7a89d674439">
+  <part id="P4fbd80f8d4e65ae980672923b87162c2">
     <!--========================= Measure 0 ==========================-->
     <measure number="0">
       <attributes>
@@ -173,7 +173,7 @@
     </measure>
   </part>
   <!--=========================== Part 2 ===========================-->
-  <part id="P88711b020cc71e12364fdbde9ff4a6e1">
+  <part id="P328955af932995d7d11bf11174ea3e75">
     <!--========================= Measure 0 ==========================-->
     <measure number="0">
       <attributes>
@@ -312,7 +312,7 @@
     </measure>
   </part>
   <!--=========================== Part 3 ===========================-->
-  <part id="Pff24d1b4dbd9df7524ce2e675e91a167">
+  <part id="P13a5cc9af818661d6b361dcf8e5aa827">
     <!--========================= Measure 0 ==========================-->
     <measure number="0">
       <attributes>
@@ -451,7 +451,7 @@
     </measure>
   </part>
   <!--=========================== Part 4 ===========================-->
-  <part id="P4fcda43d792461d663bcf191c7de5ccb">
+  <part id="P626cac33dfa46a665a34d30a17ed5be4">
     <!--========================= Measure 0 ==========================-->
     <measure number="0">
       <attributes>
@@ -582,7 +582,7 @@
     </measure>
   </part>
   <!--=========================== Part 5 ===========================-->
-  <part id="P22d762654a6f3aef39343ed88646d9f7">
+  <part id="Pfdc3edfde21b48209a4ade1f0e6cd188">
     <!--========================= Measure 0 ==========================-->
     <measure number="0">
       <attributes>
@@ -605,6 +605,9 @@
         <duration>10080</duration>
         <type>quarter</type>
         <stem>none</stem>
+        <notations>
+          <slur number="1" type="start" />
+        </notations>
       </note>
       <note>
         <pitch>
@@ -658,6 +661,9 @@
         <type>quarter</type>
         <accidental>natural</accidental>
         <stem>none</stem>
+        <notations>
+          <slur number="1" type="stop" />
+        </notations>
       </note>
       <note>
         <pitch>
@@ -667,6 +673,9 @@
         <duration>10080</duration>
         <type>quarter</type>
         <stem>none</stem>
+        <notations>
+          <slur number="2" type="start" />
+        </notations>
       </note>
       <note>
         <pitch>
@@ -722,11 +731,14 @@
         <type>quarter</type>
         <accidental>sharp</accidental>
         <stem>none</stem>
+        <notations>
+          <slur number="2" type="stop" />
+        </notations>
       </note>
     </measure>
   </part>
   <!--=========================== Part 6 ===========================-->
-  <part id="P075179c439160578ab6bc47c57cb8fd8">
+  <part id="Pf6d879e0d93334b5978dfa373471aa90">
     <!--========================= Measure 0 ==========================-->
     <measure number="0">
       <attributes>
@@ -749,6 +761,9 @@
         <duration>10080</duration>
         <type>quarter</type>
         <stem>none</stem>
+        <notations>
+          <slur number="3" type="start" />
+        </notations>
       </note>
       <note>
         <pitch>
@@ -802,6 +817,9 @@
         <type>quarter</type>
         <accidental>natural</accidental>
         <stem>none</stem>
+        <notations>
+          <slur number="3" type="stop" />
+        </notations>
       </note>
       <note>
         <pitch>
@@ -811,6 +829,9 @@
         <duration>10080</duration>
         <type>quarter</type>
         <stem>none</stem>
+        <notations>
+          <slur number="4" type="start" />
+        </notations>
       </note>
       <note>
         <pitch>
@@ -866,11 +887,14 @@
         <type>quarter</type>
         <accidental>sharp</accidental>
         <stem>none</stem>
+        <notations>
+          <slur number="4" type="stop" />
+        </notations>
       </note>
     </measure>
   </part>
   <!--=========================== Part 7 ===========================-->
-  <part id="P344ff1600931b6595fd5a3762eee002f">
+  <part id="P418d78fc9050f1ca7dc6f2d57a94ceb6">
     <!--========================= Measure 0 ==========================-->
     <measure number="0">
       <attributes>
@@ -893,6 +917,9 @@
         <duration>10080</duration>
         <type>quarter</type>
         <stem>none</stem>
+        <notations>
+          <slur number="5" type="start" />
+        </notations>
       </note>
       <note>
         <pitch>
@@ -942,6 +969,9 @@
         <duration>10080</duration>
         <type>quarter</type>
         <stem>none</stem>
+        <notations>
+          <slur number="5" type="stop" />
+        </notations>
       </note>
       <note>
         <pitch>
@@ -953,6 +983,9 @@
         <type>quarter</type>
         <accidental>sharp</accidental>
         <stem>none</stem>
+        <notations>
+          <slur number="6" type="start" />
+        </notations>
       </note>
       <note>
         <pitch>
@@ -1002,6 +1035,9 @@
         <duration>10080</duration>
         <type>quarter</type>
         <stem>none</stem>
+        <notations>
+          <slur number="6" type="stop" />
+        </notations>
       </note>
     </measure>
   </part>

@@ -436,7 +436,6 @@ class combinatoriality():
             
             #checks for retrograde combinatoriality
             first_tetrachord_check = first_tetrachord == compared_third_tetrachord
-            second_tetrachord_check = second_tetrachord == compared_second_tetrachord
             third_tetrachord_check = third_tetrachord == compared_first_tetrachord
             if i > 0 and first_tetrachord_check and second_tetrachord_check and third_tetrachord_check:
                 combinatorial_transformations.append(twelve_tone_matrix.retrograde_order(prime_row)[i])
@@ -459,7 +458,6 @@ class combinatoriality():
             
             #checks for inversion combinatoriality
             first_tetrachord_check = first_tetrachord == compared_third_tetrachord
-            second_tetrachord_check = second_tetrachord == compared_second_tetrachord
             third_tetrachord_check = third_tetrachord == compared_first_tetrachord
             if first_tetrachord_check and second_tetrachord_check and third_tetrachord_check:
                 combinatorial_transformations.append(twelve_tone_matrix.retrograde_inversion_order(prime_row)[i])
@@ -805,10 +803,8 @@ class music_xml_writer():#WIP
         Warning: If a specific file path is given as a root directory, user might encounter permission errors.
         """
         file_path = cls.create_file_path(directory, file_name)
-        if file_path is None:
-            return
         full_score = cls.create_twelve_tone_report_xml(prime_row, score_title)
-        full_score.write("musicxml", f"./xml_files/{file_name}")
+        full_score.write("musicxml", file_path)
         print("\n=========================\nFile successfully written\n=========================")
     
     @classmethod
@@ -842,9 +838,10 @@ class music_xml_writer():#WIP
             return full_score
         
         combinatorial_hexachords = combinatoriality.find_hexachordal_combinatorials(prime_row)
-        for combinatorials in combinatorial_hexachords:
-            part = cls.create_hexachord_combinatorial_part(combinatorials, prime_row)
+        for transformations in combinatorial_hexachords:
+            part = cls.create_hexachord_combinatorial_part(transformations, prime_row)
             full_score.append(part)
+        
         return full_score
     
     @classmethod
@@ -866,6 +863,7 @@ class music_xml_writer():#WIP
             note.stemDirection = "noStem"
             measure.append(note)
         prime_row_part.append(measure)
+        
         return prime_row_part
     
     @classmethod
@@ -889,9 +887,14 @@ class music_xml_writer():#WIP
             note = music21.note.Note(pitch)
             note.stemDirection = "noStem"
             measure.append(note)
-        comment = music21.expressions.TextExpression("(hexachordal combinatorial)")        
-        measure.insert(0, comment)
+        comment = music21.expressions.TextExpression("(hexachordal combinatorial)")
         hex_row_part.append(measure)
+        measure.insert(0, comment)
+        first_slur = music21.spanner.Slur([measure.notes[0],  measure.notes[5]])
+        measure.insert(0.0, first_slur)
+        second_slur = music21.spanner.Slur([measure.notes[6],  measure.notes[11]])
+        measure.insert(0.0, second_slur)
+        
         return hex_row_part
     
     @classmethod
@@ -907,8 +910,7 @@ class music_xml_writer():#WIP
             if os.path.exists(directory) == False:
                 raise ValueError(f"Specified directory('{directory}')\n does not exist")
         if directory is None:
-            directory = os.path.normpath("/xml_files/")
-        file_name = os.path.normpath(f"{file_name}")
+            directory = os.path.normpath("./xml_files/")
         return os.path.join(directory, file_name)
     
     
@@ -917,4 +919,4 @@ class music_xml_writer():#WIP
 if __name__ == "__main__":
     prime_row = tone_row.generate_random_row()
     music_xml_writer.write_twelvetone_report(list(range(12)), "test_file")
-    print(combinatoriality.find_tetrachordal_combinatorials(list(range(12))))
+    #print(combinatoriality.find_tetrachordal_combinatorials(list(range(12))))
