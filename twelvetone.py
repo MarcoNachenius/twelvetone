@@ -241,7 +241,7 @@ class tone_row (object):
             
         return transformations
 
-class twelve_tone_matrix(tone_row):
+class twelve_tone_matrix():
     
     @classmethod
     def generate_twelve_tone_matrix(cls, prime_row: list):
@@ -258,13 +258,13 @@ class twelve_tone_matrix(tone_row):
         if sorted_row != list(range(12)):
             raise ValueError("The provided tone row is not a valid 12-tone row")
         matrix = [prime_row]
-        for i in cls.prime_inversion(prime_row):
+        for i in tone_row.prime_inversion(prime_row):
             if i == prime_row[0]:
                 continue
             interval = i - prime_row[0]
             if interval < 0:
                 interval += 12
-            matrix.append(cls.transpose_row(prime_row, interval))
+            matrix.append(tone_row.transpose_row(prime_row, interval))
         return matrix
     
     @classmethod
@@ -397,6 +397,74 @@ class combinatoriality():
                     hexachords.append(twelve_tone_matrix.retrograde_inversion_order(prime_row)[i])
 
         return hexachords
+    
+    @classmethod
+    def find_tetrachordal_combinatorials(cls, prime_row: list):
+        """
+        Returns a list of transformations that share tetrachordal combinatoriality
+        with the prime row.\n
+        
+        SHORT EXPLANATION
+        ==================
+        
+        """
+        combinatorial_transformations = []
+        first_tetrachord = prime_row[:4]
+        first_tetrachord.sort()
+        second_tetrachord = prime_row[4:8]
+        second_tetrachord.sort()
+        third_tetrachord = prime_row[8:]
+        third_tetrachord.sort()
+        tt_matrix = twelve_tone_matrix.generate_twelve_tone_matrix(prime_row)
+        
+        #traversal of twelve-tone matrix
+        for i in range (12):
+            compared_first_tetrachord = tt_matrix[i][:4]
+            compared_first_tetrachord.sort()
+            compared_second_tetrachord = tt_matrix[i][4:8]
+            compared_second_tetrachord.sort()
+            compared_third_tetrachord = tt_matrix[i][8:]
+            compared_third_tetrachord.sort()
+            
+            #ITERATE THROUGH ROWS OF MATRIX
+            #checks for row combinatoriality
+            first_tetrachord_check = first_tetrachord == compared_first_tetrachord
+            second_tetrachord_check = second_tetrachord == compared_second_tetrachord
+            third_tetrachord_check = third_tetrachord == compared_third_tetrachord
+            if i > 0 and first_tetrachord_check and second_tetrachord_check and third_tetrachord_check:
+                combinatorial_transformations.append(twelve_tone_matrix.row_order(prime_row)[i])
+            
+            #checks for retrograde combinatoriality
+            first_tetrachord_check = first_tetrachord == compared_third_tetrachord
+            second_tetrachord_check = second_tetrachord == compared_second_tetrachord
+            third_tetrachord_check = third_tetrachord == compared_first_tetrachord
+            if i > 0 and first_tetrachord_check and second_tetrachord_check and third_tetrachord_check:
+                combinatorial_transformations.append(twelve_tone_matrix.retrograde_order(prime_row)[i])
+            
+            #ITERATE THROUGH COLUMNS OF MATRIX
+            matrix_column = [tt_matrix[x][i] for x in range(12)]
+            compared_first_tetrachord = matrix_column[:4]
+            compared_first_tetrachord.sort()
+            compared_second_tetrachord = matrix_column[4:8]
+            compared_second_tetrachord.sort()
+            compared_third_tetrachord = matrix_column[8:]
+            compared_third_tetrachord.sort()
+            
+            #checks for inversion combinatoriality
+            first_tetrachord_check = first_tetrachord == compared_first_tetrachord
+            second_tetrachord_check = second_tetrachord == compared_second_tetrachord
+            third_tetrachord_check = third_tetrachord == compared_third_tetrachord
+            if first_tetrachord_check and second_tetrachord_check and third_tetrachord_check:
+                combinatorial_transformations.append(twelve_tone_matrix.inversion_order(prime_row)[i])
+            
+            #checks for inversion combinatoriality
+            first_tetrachord_check = first_tetrachord == compared_third_tetrachord
+            second_tetrachord_check = second_tetrachord == compared_second_tetrachord
+            third_tetrachord_check = third_tetrachord == compared_first_tetrachord
+            if first_tetrachord_check and second_tetrachord_check and third_tetrachord_check:
+                combinatorial_transformations.append(twelve_tone_matrix.retrograde_inversion_order(prime_row)[i])
+                
+        return combinatorial_transformations
 
 class note_names():
     
@@ -733,6 +801,7 @@ class music_xml_writer():#WIP
         the treble clef (between F4 and E5). All notes are written as naturals or sharps(excluding 'E#' and B#').
         
         If directory is not specified, file will be written in 'xml_files' subfolder in the project file.
+        
         Warning: If a specific file path is given as a root directory, user might encounter permission errors.
         """
         file_path = cls.create_file_path(directory, file_name)
@@ -763,7 +832,7 @@ class music_xml_writer():#WIP
             score_title = "Analysis of a Twelve-tone Row"
         prime_part_names = ["P0", "R0", "I0", "RI0"]
         full_score = music21.stream.Score()
-        full_score.insert(0, music21.metadata.Metadata(title = score_title, composer = ""))
+        full_score.insert(0, music21.metadata.Metadata(title = score_title, composer = "", hideFirstNumber = True))
         
         for transformations in prime_part_names:
             part = cls.create_prime_transformation_part(transformations, prime_row)
@@ -847,5 +916,5 @@ class music_xml_writer():#WIP
 
 if __name__ == "__main__":
     prime_row = tone_row.generate_random_row()
-    #music_xml_writer.write_twelvetone_report(list(range(12)), "test_file")
-    twelve_tone_matrix.display_matrix(prime_row)
+    music_xml_writer.write_twelvetone_report(list(range(12)), "test_file")
+    print(combinatoriality.find_tetrachordal_combinatorials(list(range(12))))
