@@ -1010,6 +1010,33 @@ class music_xml_writer():#WIP
         return tetra_row_part
     
     @classmethod
+    def create_trichord_combinatorial_part(cls, transformation_name: str, prime_row: list):
+        """
+        Returns a music21 part object.
+        Part consists of twelve stemless quarter notes with a hidden 12/4
+        time signature.
+        
+        Dotted ties are added over each half of the tone row.
+        Text is added above the part which indicates that it is a hexachordal combinatorial.
+        """
+        measure = cls.create_stemless_measure(transformation_name, prime_row)
+        comment = music21.expressions.TextExpression("(trichordal combinatorial)")
+        measure.insert(0, comment)
+        first_slur = music21.spanner.Slur([measure.notes[0],  measure.notes[2]])
+        measure.insert(0.0, first_slur)
+        second_slur = music21.spanner.Slur([measure.notes[3],  measure.notes[5]])
+        measure.insert(0.0, second_slur)
+        third_slur = music21.spanner.Slur([measure.notes[6],  measure.notes[8]])
+        measure.insert(0.0, third_slur)
+        fourth_slur = music21.spanner.Slur([measure.notes[9],  measure.notes[11]])
+        measure.insert(0.0, fourth_slur)
+        tetra_row_part = music21.stream.Part()
+        tetra_row_part.partName = transformation_name
+        tetra_row_part.append(measure)
+        
+        return tetra_row_part
+    
+    @classmethod
     def create_file_path(cls, directory, file_name):
         """
         Returns a file path(including the .musicxml file) as a normalized string.
