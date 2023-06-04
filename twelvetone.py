@@ -415,9 +415,9 @@ class combinatoriality():
         second_tetrachord.sort()
         third_tetrachord = prime_row[8:]
         third_tetrachord.sort()
-        tt_matrix = twelve_tone_matrix.generate_twelve_tone_matrix(prime_row)
         
         #traversal of twelve-tone matrix
+        tt_matrix = twelve_tone_matrix.generate_twelve_tone_matrix(prime_row)
         for i in range (12):
             compared_first_tetrachord = tt_matrix[i][:4]
             compared_first_tetrachord.sort()
@@ -460,6 +460,84 @@ class combinatoriality():
             first_tetrachord_check = first_tetrachord == compared_third_tetrachord
             third_tetrachord_check = third_tetrachord == compared_first_tetrachord
             if first_tetrachord_check and second_tetrachord_check and third_tetrachord_check:
+                combinatorial_transformations.append(twelve_tone_matrix.retrograde_inversion_order(prime_row)[i])
+                
+        return combinatorial_transformations
+    
+    @classmethod
+    def find_trichordal_combinatorials(cls, prime_row: list):
+        """
+        Returns a list of transformations that share tetrachordal combinatoriality
+        with the prime row.\n
+        
+        SHORT EXPLANATION
+        ==================
+        
+        """
+        combinatorial_transformations = []
+        first_tetrachord = prime_row[:3]
+        first_tetrachord.sort()
+        second_tetrachord = prime_row[3:6]
+        second_tetrachord.sort()
+        third_tetrachord = prime_row[6:9]
+        third_tetrachord.sort()
+        fourth_tetrachord = prime_row[9:]
+        fourth_tetrachord.sort()
+        
+        #traversal of twelve-tone matrix
+        tt_matrix = twelve_tone_matrix.generate_twelve_tone_matrix(prime_row)
+        for i in range (12):
+            compared_first_tetrachord = tt_matrix[i][:3]
+            compared_first_tetrachord.sort()
+            compared_second_tetrachord = tt_matrix[i][3:6]
+            compared_second_tetrachord.sort()
+            compared_third_tetrachord = tt_matrix[i][6:9]
+            compared_third_tetrachord.sort()
+            compared_fourth_tetrachord = tt_matrix[i][9:]
+            compared_fourth_tetrachord.sort()
+            
+            #ITERATE THROUGH ROWS OF MATRIX
+            #checks for row combinatoriality
+            first_tetrachord_check = first_tetrachord == compared_first_tetrachord
+            second_tetrachord_check = second_tetrachord == compared_second_tetrachord
+            third_tetrachord_check = third_tetrachord == compared_third_tetrachord
+            fourth_tetrachord_check = fourth_tetrachord == compared_fourth_tetrachord
+            if i > 0 and first_tetrachord_check and second_tetrachord_check and third_tetrachord_check and fourth_tetrachord_check:
+                combinatorial_transformations.append(twelve_tone_matrix.row_order(prime_row)[i])
+            
+            #checks for retrograde combinatoriality
+            first_tetrachord_check = first_tetrachord == compared_fourth_tetrachord
+            second_tetrachord_check = second_tetrachord == compared_third_tetrachord
+            third_tetrachord_check = third_tetrachord == compared_second_tetrachord
+            fourth_tetrachord_check = fourth_tetrachord == compared_first_tetrachord
+            if i > 0 and first_tetrachord_check and second_tetrachord_check and third_tetrachord_check and fourth_tetrachord_check:
+                combinatorial_transformations.append(twelve_tone_matrix.retrograde_order(prime_row)[i])
+            
+            #ITERATE THROUGH COLUMNS OF MATRIX
+            matrix_column = [tt_matrix[x][i] for x in range(12)]
+            compared_first_tetrachord = matrix_column[:3]
+            compared_first_tetrachord.sort()
+            compared_second_tetrachord = matrix_column[3:6]
+            compared_second_tetrachord.sort()
+            compared_third_tetrachord = matrix_column[6:9]
+            compared_third_tetrachord.sort()
+            compared_fourth_tetrachord = matrix_column[9:]
+            compared_fourth_tetrachord.sort()
+            
+            #checks for inversion combinatoriality
+            first_tetrachord_check = first_tetrachord == compared_first_tetrachord
+            second_tetrachord_check = second_tetrachord == compared_second_tetrachord
+            third_tetrachord_check = third_tetrachord == compared_third_tetrachord
+            fourth_tetrachord_check = fourth_tetrachord == compared_fourth_tetrachord
+            if first_tetrachord_check and second_tetrachord_check and third_tetrachord_check and fourth_tetrachord_check:
+                combinatorial_transformations.append(twelve_tone_matrix.inversion_order(prime_row)[i])
+            
+            #checks for inversion combinatoriality
+            first_tetrachord_check = first_tetrachord == compared_fourth_tetrachord
+            second_tetrachord_check = second_tetrachord == compared_third_tetrachord
+            third_tetrachord_check = third_tetrachord == compared_second_tetrachord
+            fourth_tetrachord_check = fourth_tetrachord == compared_first_tetrachord
+            if first_tetrachord_check and second_tetrachord_check and third_tetrachord_check and fourth_tetrachord_check:
                 combinatorial_transformations.append(twelve_tone_matrix.retrograde_inversion_order(prime_row)[i])
                 
         return combinatorial_transformations
@@ -842,6 +920,11 @@ class music_xml_writer():#WIP
             part = cls.create_hexachord_combinatorial_part(transformations, prime_row)
             full_score.append(part)
         
+        combinatorial_tetrachords = combinatoriality.find_tetrachordal_combinatorials(prime_row)
+        for transformations in combinatorial_tetrachords:
+            part = cls.create_tetrachord_combinatorial_part(transformations, prime_row)
+            full_score.append(part)
+        
         return full_score
     
     @classmethod
@@ -894,9 +977,9 @@ class music_xml_writer():#WIP
         first_slur = music21.spanner.Slur([measure.notes[0],  measure.notes[5]])
         measure.insert(0.0, first_slur)
         second_slur = music21.spanner.Slur([measure.notes[6],  measure.notes[11]])
+        measure.insert(0.0, second_slur)
         hex_row_part = music21.stream.Part()
         hex_row_part.partName = transformation_name
-        measure.insert(0.0, second_slur)
         hex_row_part.append(measure)
         
         return hex_row_part
@@ -911,26 +994,20 @@ class music_xml_writer():#WIP
         Dotted ties are added over each half of the tone row.
         Text is added above the part which indicates that it is a hexachordal combinatorial.
         """
-        measure = music21.stream.Measure()
-        measure.timeSignature = music21.meter.TimeSignature('12/4')
-        measure.timeSignature.style.hideObjectOnPrint = True
-        hex_row_part = music21.stream.Part()
-        hex_row_part.partName = transformation_name
-        pr_part_notes = copy.deepcopy((tone_row.get_transformation(prime_row, transformation_name)))
-        note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
-        for pitch in pr_part_notes:
-            note = music21.note.Note(pitch)
-            note.stemDirection = "noStem"
-            measure.append(note)
-        comment = music21.expressions.TextExpression("(hexachordal combinatorial)")
-        hex_row_part.append(measure)
+        measure = cls.create_stemless_measure(transformation_name, prime_row)
+        comment = music21.expressions.TextExpression("(tetrachordal combinatorial)")
         measure.insert(0, comment)
-        first_slur = music21.spanner.Slur([measure.notes[0],  measure.notes[5]])
+        first_slur = music21.spanner.Slur([measure.notes[0],  measure.notes[3]])
         measure.insert(0.0, first_slur)
-        second_slur = music21.spanner.Slur([measure.notes[6],  measure.notes[11]])
+        second_slur = music21.spanner.Slur([measure.notes[4],  measure.notes[7]])
         measure.insert(0.0, second_slur)
+        third_slur = music21.spanner.Slur([measure.notes[8],  measure.notes[11]])
+        measure.insert(0.0, third_slur)
+        tetra_row_part = music21.stream.Part()
+        tetra_row_part.partName = transformation_name
+        tetra_row_part.append(measure)
         
-        return hex_row_part
+        return tetra_row_part
     
     @classmethod
     def create_file_path(cls, directory, file_name):
@@ -952,16 +1029,15 @@ class music_xml_writer():#WIP
 
 
 if __name__ == "__main__":
-    prime_row = tone_row.generate_random_row()
-    music_xml_writer.write_twelvetone_report(prime_row, "test_file")
     
     found_tetrachord = False
     while not found_tetrachord:
         prime_row = tone_row.generate_random_row()
-        tetrachords = combinatoriality.find_tetrachordal_combinatorials(prime_row)
+        tetrachords = combinatoriality.find_hexachordal_combinatorials(prime_row)
         if len(tetrachords) > 0:
             print("Row with tetrachordal combinatoriality has been found!")
             print(prime_row)
             print(tetrachords)
+            music_xml_writer.write_twelvetone_report(prime_row, "test_file")
             found_tetrachord = True
     #print(combinatoriality.find_tetrachordal_combinatorials(list(range(12))))

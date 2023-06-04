@@ -91,6 +91,7 @@ class test_combinatoriality(unittest.TestCase):
         prime_row = list(range(12))
         self.assertEqual(tt.combinatoriality.find_hexachordal_combinatorials(prime_row), ['I5', 'R5', 'RI0'])
         self.assertEqual(tt.combinatoriality.find_tetrachordal_combinatorials(prime_row), ['RI0'])
+        self.assertEqual(tt.combinatoriality.find_trichordal_combinatorials(prime_row), ['RI0'])
         
         prime_row = [10, 8, 0, 9, 4, 6, 3, 7, 1, 5, 11, 2]
         self.assertEqual(tt.combinatoriality.find_hexachordal_combinatorials(prime_row), ['RI11'])
