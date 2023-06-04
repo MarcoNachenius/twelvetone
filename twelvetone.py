@@ -845,29 +845,72 @@ class music_xml_writer():#WIP
         return full_score
     
     @classmethod
+    def create_stemless_measure(cls, transformation_name: str, prime_row: list):
+        """
+        Returns a music21 measure object.
+        Part consists of twelve stemless quarter notes with a hidden 12/4
+        time signature.
+        """
+        
+        measure = music21.stream.Measure()
+        measure.timeSignature = music21.meter.TimeSignature('12/4')
+        measure.timeSignature.style.hideObjectOnPrint = True
+        pr_part_notes = copy.deepcopy((tone_row.get_transformation(prime_row, transformation_name)))
+        note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
+        for pitch in pr_part_notes:
+            note = music21.note.Note(pitch)
+            note.stemDirection = "noStem"
+            measure.append(note)
+        
+        return measure
+    
+    @classmethod
     def create_prime_transformation_part(cls, prime_transformation_name: str, prime_row: list):
         """
         Returns a music21 part object.
         Part consists of twelve stemless quarter notes with a hidden 12/4
         time signature.
         """
-        measure = music21.stream.Measure()
-        measure.timeSignature = music21.meter.TimeSignature('12/4')
-        measure.timeSignature.style.hideObjectOnPrint = True
+        measure = cls.create_stemless_measure(prime_transformation_name, prime_row)
         prime_row_part = music21.stream.Part()
         prime_row_part.partName = prime_transformation_name
-        pr_part_notes = copy.deepcopy((tone_row.get_transformation(prime_row, prime_transformation_name)))
-        note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
-        for pitch in pr_part_notes:
-            note = music21.note.Note(pitch)
-            note.stemDirection = "noStem"
-            measure.append(note)
         prime_row_part.append(measure)
         
         return prime_row_part
     
     @classmethod
     def create_hexachord_combinatorial_part(cls, transformation_name: str, prime_row: list):
+        """
+        Returns a music21 part object.
+        Part consists of twelve stemless quarter notes with a hidden 12/4
+        time signature.
+        
+        Dotted ties are added over each half of the tone row.
+        Text is added above the part which indicates that it is a hexachordal combinatorial.
+        """
+        measure = music21.stream.Measure()
+        measure.timeSignature = music21.meter.TimeSignature('12/4')
+        measure.timeSignature.style.hideObjectOnPrint = True
+        hex_row_part = music21.stream.Part()
+        hex_row_part.partName = transformation_name
+        pr_part_notes = copy.deepcopy((tone_row.get_transformation(prime_row, transformation_name)))
+        note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
+        for pitch in pr_part_notes:
+            note = music21.note.Note(pitch)
+            note.stemDirection = "noStem"
+            measure.append(note)
+        comment = music21.expressions.TextExpression("(hexachordal combinatorial)")
+        measure.insert(0, comment)
+        first_slur = music21.spanner.Slur([measure.notes[0],  measure.notes[5]])
+        measure.insert(0.0, first_slur)
+        second_slur = music21.spanner.Slur([measure.notes[6],  measure.notes[11]])
+        measure.insert(0.0, second_slur)
+        hex_row_part.append(measure)
+        
+        return hex_row_part
+    
+    @classmethod
+    def create_tetrachord_combinatorial_part(cls, transformation_name: str, prime_row: list):
         """
         Returns a music21 part object.
         Part consists of twelve stemless quarter notes with a hidden 12/4
@@ -918,5 +961,15 @@ class music_xml_writer():#WIP
 
 if __name__ == "__main__":
     prime_row = tone_row.generate_random_row()
-    music_xml_writer.write_twelvetone_report(list(range(12)), "test_file")
+    music_xml_writer.write_twelvetone_report(prime_row, "test_file")
+    
+    found_tetrachord = False
+    while not found_tetrachord:
+        prime_row = tone_row.generate_random_row()
+        tetrachords = combinatoriality.find_tetrachordal_combinatorials(prime_row)
+        if len(tetrachords) > 0:
+            print("Row with tetrachordal combinatoriality has been found!")
+            print(prime_row)
+            print(tetrachords)
+            found_tetrachord = True
     #print(combinatoriality.find_tetrachordal_combinatorials(list(range(12))))
