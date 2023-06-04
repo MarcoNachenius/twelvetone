@@ -737,27 +737,54 @@ class music_xml_writer():#WIP
             return
         if score_title is None:
             score_title = "Analysis of a Twelve-tone Row"
-        part_names = ["P0", "R0", "I0", "RI0"]
+        prime_part_names = ["P0", "R0", "I0", "RI0"]
         full_score = music21.stream.Score()
+        
+        
+        #measure = music21.stream.Measure()
+        #measure.timeSignature = music21.meter.TimeSignature('12/4')
+        #measure.timeSignature.style.hideObjectOnPrint = True
+        #prime_row_part = music21.stream.Part()
+        #prime_row_part.partName = "P0"
+        #pr_part_notes = copy.deepcopy(prime_row)
+        #note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
+        #part_notes = tone_row.prime_transformations_list(prime_row)
+        #for pitch in pr_part_notes:
+        #    note = music21.note.Note(pitch)
+        #    note.stemDirection = "noStem"
+        #    measure.append(note)
+        #prime_row_part.append(measure)
+        
+        
+        for transformations in prime_part_names:
+            part = cls.create_prime_transformation_part(transformations, prime_row)
+            full_score.append(part)
+        
+        full_score.insert(0, music21.metadata.Metadata(title = score_title, composer = ""))
+        full_score.write("musicxml", f"./xml_files/{file_name}")
+        print("\n=========================\nFile successfully created\n=========================")
+    
+    @classmethod
+    def create_prime_transformation_part(cls, prime_transformation_name: str, prime_row: list):
+        """
+        Returns a music21 part object.
+        Part consists of twelve stemless quarter notes with a hidden 12/4
+        time signature.
+        """
         measure = music21.stream.Measure()
         measure.timeSignature = music21.meter.TimeSignature('12/4')
         measure.timeSignature.style.hideObjectOnPrint = True
         prime_row_part = music21.stream.Part()
-        prime_row_part.partName = "P0"
-        pr_part_notes = copy.deepcopy(prime_row)
+        prime_row_part.partName = prime_transformation_name
+        print(prime_row)
+        pr_part_notes = copy.deepcopy(tone_row.get_transformation(prime_row, prime_transformation_name))
         note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
-        part_notes = tone_row.prime_transformations_list(prime_row)
         for pitch in pr_part_notes:
             note = music21.note.Note(pitch)
             note.stemDirection = "noStem"
             measure.append(note)
         prime_row_part.append(measure)
-        
-        full_score.append(prime_row_part)
-        full_score.insert(0, music21.metadata.Metadata(title = score_title, composer = ""))
-        full_score.write("musicxml", f"./xml_files/{file_name}")
-        note_names.convert_numbers_to_note_names(part_notes, note_names.number_to_sharp_treble_clef_positions)
-        print("\n=========================\nFile successfully created\n=========================")
+        return prime_row_part
     
     @classmethod
     def create_file_path(cls, directory, file_name):
@@ -779,10 +806,7 @@ class music_xml_writer():#WIP
     
 if __name__ == "__main__":
     prime_row = tone_row.generate_random_row()
-    for i in twelve_tone_matrix.generate_twelve_tone_matrix(prime_row):
-        print(i)
-    print(combinatoriality.find_hexachordal_combinatorials(prime_row))
     #row.display_matrix()
-    #music_xml_writer.write_twelvetone_report(row.prime_row, "test_file")
+    music_xml_writer.write_twelvetone_report(prime_row, "test_file")
     #for i in []:
     #    print(note_names.note_to_number_relations[i])
