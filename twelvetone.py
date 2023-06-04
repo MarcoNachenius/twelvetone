@@ -333,13 +333,15 @@ class twelve_tone_matrix(tone_row):
             row_order.append(f"RI{str(semitones_up)}")
         return row_order
     
-    def display_matrix(self):
+    @classmethod
+    def display_matrix(cls, prime_row: list):
         print("=======================\n" + "Random tone row:\n" + "=======================" )
-        print(self.prime_row)
+        print(prime_row)
         print("\n=======================\n" + "Pone row matrix:\n" + "=======================\n" )
-        print(self.inversion_order)
+        print(cls.inversion_order(prime_row))
         for i in range(12):
-            print(self.row_order[i] + str(self.matrix[i]) + self.retrograde_order[i])
+            print(cls.row_order(prime_row)[i] + str(cls.generate_twelve_tone_matrix(prime_row)[i]) + cls.retrograde_order(prime_row)[i])
+        print(cls.retrograde_inversion_order(prime_row))
 
 class combinatoriality():
     
@@ -818,7 +820,7 @@ class music_xml_writer():#WIP
             note = music21.note.Note(pitch)
             note.stemDirection = "noStem"
             measure.append(note)
-        comment = music21.expressions.TextExpression("(hexachordal combinatorial)")
+        comment = music21.expressions.TextExpression("(hexachordal combinatorial)")        
         measure.insert(0, comment)
         hex_row_part.append(measure)
         return hex_row_part
@@ -845,4 +847,5 @@ class music_xml_writer():#WIP
 
 if __name__ == "__main__":
     prime_row = tone_row.generate_random_row()
-    music_xml_writer.write_twelvetone_report(prime_row, "test_file")
+    #music_xml_writer.write_twelvetone_report(list(range(12)), "test_file")
+    twelve_tone_matrix.display_matrix(prime_row)
