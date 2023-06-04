@@ -252,11 +252,11 @@ class twelve_tone_matrix(tone_row):
         I0 is always the first column ([0:0] -> [12:0])
         """
         if len(prime_row) != 12:
-            print("Warning: row provided is not the right length. (should be 12 tones long)")
+            raise ValueError("Row provided is not the right length. (should be 12 tones long)")
         sorted_row = copy.deepcopy(prime_row)
         sorted_row.sort()
         if sorted_row != list(range(12)):
-            print("Warning: the provided tone row is not a valid 12-tone row")
+            raise ValueError("The provided tone row is not a valid 12-tone row")
         matrix = [prime_row]
         for i in cls.prime_inversion(prime_row):
             if i == prime_row[0]:
@@ -590,11 +590,11 @@ class intervals():
         Returns the number of semitones between two notes within an octave space
         """
         if starting_note[0].isupper == False:
-            print(f"Starting note {starting_note[0]} should be written in uppercase")
+            raise ValueError(f"Starting note {starting_note[0]} should be written in uppercase")
         if final_note[0].isupper == False:
-            print(f"Final note {final_note[0]} should be written in uppercase")
+            raise ValueError(f"Final note {final_note[0]} should be written in uppercase")
         if direction not in {"up", "down"}:
-            print("Invalid direction indicator, direction can either be 'up' or 'down'")
+            raise ValueError("Invalid direction indicator, direction can either be 'up' or 'down'")
         if direction == "up":
             semitone_distance = note_names.note_to_number_relations[final_note] - note_names.note_to_number_relations[starting_note]
             if semitone_distance < 0:
@@ -646,11 +646,11 @@ class intervals():
         and serves no practical purpose in visually demonstrating transformations of tone rows.
         """
         if starting_note[0].isupper == False:
-            print(f"Starting note {starting_note[0]} should be written in uppercase")
+            raise ValueError(f"Starting note '{starting_note[0]}' should be written in uppercase")
         if final_note[0].isupper == False:
-            print(f"Final note {final_note[0]} should be written in uppercase")
+            raise ValueError(f"Final note '{final_note[0]}' should be written in uppercase")
         if direction not in {"up", "down"}:
-            print("Invalid direction indicator, direction should be 'up' or 'down'")
+            raise ValueError("Invalid direction indicator, direction should be 'up' or 'down'")
         
         note_order = ("A", "B", "C", "D", "E", "F", "G")
         #assumes direction == "true"
@@ -714,14 +714,14 @@ class intervals():
 class music_xml_writer():#WIP
     
     @classmethod
-    def write_twelvetone_report(cls, prime_row: list, file_name: str, directory = None, score_title = None, include_combinatoriality = True):
+    def write_twelvetone_report(cls, prime_row: list, file_name: str, directory = None, score_title = None, include_combinatorials = True):
         """
         Creates a .musicxml file with parts in the following order:\n
         -P0\n
         -R0\n
         -I0\n
         -RI0\n
-        (if include_combinatoriality = True)\n
+        (if include_combinatorials = True)\n
         -hexachordal combinatorials, if they exist\n
         -tetrachordal combinatorials, if they exist\n
         -trichordal combinatorials, if they exist\n
@@ -731,38 +731,50 @@ class music_xml_writer():#WIP
         the treble clef (between F4 and E5). All notes are written as naturals or sharps(excluding 'E#' and B#').
         
         If directory is not specified, file will be written in 'xml_files' subfolder in the project file.
+        Warning: If a specific file path is given as a root directory, user might encounter permission errors.
         """
         file_path = cls.create_file_path(directory, file_name)
         if file_path is None:
             return
+        full_score = cls.create_twelve_tone_report_xml(prime_row, score_title)
+        full_score.write("musicxml", f"./xml_files/{file_name}")
+        print("\n=========================\nFile successfully written\n=========================")
+    
+    @classmethod
+    def create_twelve_tone_report_xml(cls, prime_row: list, score_title = None, include_combinatorials = True):
+        """
+        Returns a .musicxml file with parts in the following order:\n
+        -P0\n
+        -R0\n
+        -I0\n
+        -RI0\n
+        (if include_combinatorials = True)\n
+        -hexachordal combinatorials, if they exist\n
+        -tetrachordal combinatorials, if they exist\n
+        -trichordal combinatorials, if they exist\n
+        
+        
+        Every part's tone row is written in quarter notes between the top and bottom line of
+        the treble clef (between F4 and E5). All notes are written as naturals or sharps(excluding 'E#' and B#').
+        """
         if score_title is None:
             score_title = "Analysis of a Twelve-tone Row"
         prime_part_names = ["P0", "R0", "I0", "RI0"]
         full_score = music21.stream.Score()
-        
-        
-        #measure = music21.stream.Measure()
-        #measure.timeSignature = music21.meter.TimeSignature('12/4')
-        #measure.timeSignature.style.hideObjectOnPrint = True
-        #prime_row_part = music21.stream.Part()
-        #prime_row_part.partName = "P0"
-        #pr_part_notes = copy.deepcopy(prime_row)
-        #note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
-        #part_notes = tone_row.prime_transformations_list(prime_row)
-        #for pitch in pr_part_notes:
-        #    note = music21.note.Note(pitch)
-        #    note.stemDirection = "noStem"
-        #    measure.append(note)
-        #prime_row_part.append(measure)
-        
+        full_score.insert(0, music21.metadata.Metadata(title = score_title, composer = ""))
         
         for transformations in prime_part_names:
             part = cls.create_prime_transformation_part(transformations, prime_row)
             full_score.append(part)
         
-        full_score.insert(0, music21.metadata.Metadata(title = score_title, composer = ""))
-        full_score.write("musicxml", f"./xml_files/{file_name}")
-        print("\n=========================\nFile successfully created\n=========================")
+        if include_combinatorials == False:
+            return full_score
+        
+        combinatorial_hexachords = combinatoriality.find_hexachordal_combinatorials(prime_row)
+        for combinatorials in combinatorial_hexachords:
+            part = cls.create_hexachord_combinatorial_part(combinatorials, prime_row)
+            full_score.append(part)
+        return full_score
     
     @classmethod
     def create_prime_transformation_part(cls, prime_transformation_name: str, prime_row: list):
@@ -776,8 +788,7 @@ class music_xml_writer():#WIP
         measure.timeSignature.style.hideObjectOnPrint = True
         prime_row_part = music21.stream.Part()
         prime_row_part.partName = prime_transformation_name
-        print(prime_row)
-        pr_part_notes = copy.deepcopy(tone_row.get_transformation(prime_row, prime_transformation_name))
+        pr_part_notes = copy.deepcopy((tone_row.get_transformation(prime_row, prime_transformation_name)))
         note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
         for pitch in pr_part_notes:
             note = music21.note.Note(pitch)
@@ -785,6 +796,32 @@ class music_xml_writer():#WIP
             measure.append(note)
         prime_row_part.append(measure)
         return prime_row_part
+    
+    @classmethod
+    def create_hexachord_combinatorial_part(cls, transformation_name: str, prime_row: list):
+        """
+        Returns a music21 part object.
+        Part consists of twelve stemless quarter notes with a hidden 12/4
+        time signature.
+        
+        Dotted ties are added over each half of the tone row.
+        Text is added above the part which indicates that it is a hexachordal combinatorial.
+        """
+        measure = music21.stream.Measure()
+        measure.timeSignature = music21.meter.TimeSignature('12/4')
+        measure.timeSignature.style.hideObjectOnPrint = True
+        hex_row_part = music21.stream.Part()
+        hex_row_part.partName = transformation_name
+        pr_part_notes = copy.deepcopy((tone_row.get_transformation(prime_row, transformation_name)))
+        note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
+        for pitch in pr_part_notes:
+            note = music21.note.Note(pitch)
+            note.stemDirection = "noStem"
+            measure.append(note)
+        comment = music21.expressions.TextExpression("(hexachordal combinatorial)")
+        measure.insert(0, comment)
+        hex_row_part.append(measure)
+        return hex_row_part
     
     @classmethod
     def create_file_path(cls, directory, file_name):
@@ -797,16 +834,15 @@ class music_xml_writer():#WIP
         if directory is not None:
             directory = os.path.normpath(directory)
             if os.path.exists(directory) == False:
-                print(f"File creation stopped. Specified directory('{directory}')\n does not exist")
-                return 
+                raise ValueError(f"Specified directory('{directory}')\n does not exist")
         if directory is None:
             directory = os.path.normpath("/xml_files/")
         file_name = os.path.normpath(f"{file_name}")
         return os.path.join(directory, file_name)
     
+    
+
+
 if __name__ == "__main__":
     prime_row = tone_row.generate_random_row()
-    #row.display_matrix()
     music_xml_writer.write_twelvetone_report(prime_row, "test_file")
-    #for i in []:
-    #    print(note_names.note_to_number_relations[i])
