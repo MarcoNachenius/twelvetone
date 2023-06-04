@@ -888,22 +888,14 @@ class music_xml_writer():#WIP
         Dotted ties are added over each half of the tone row.
         Text is added above the part which indicates that it is a hexachordal combinatorial.
         """
-        measure = music21.stream.Measure()
-        measure.timeSignature = music21.meter.TimeSignature('12/4')
-        measure.timeSignature.style.hideObjectOnPrint = True
-        hex_row_part = music21.stream.Part()
-        hex_row_part.partName = transformation_name
-        pr_part_notes = copy.deepcopy((tone_row.get_transformation(prime_row, transformation_name)))
-        note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
-        for pitch in pr_part_notes:
-            note = music21.note.Note(pitch)
-            note.stemDirection = "noStem"
-            measure.append(note)
+        measure = cls.create_stemless_measure(transformation_name, prime_row)
         comment = music21.expressions.TextExpression("(hexachordal combinatorial)")
         measure.insert(0, comment)
         first_slur = music21.spanner.Slur([measure.notes[0],  measure.notes[5]])
         measure.insert(0.0, first_slur)
         second_slur = music21.spanner.Slur([measure.notes[6],  measure.notes[11]])
+        hex_row_part = music21.stream.Part()
+        hex_row_part.partName = transformation_name
         measure.insert(0.0, second_slur)
         hex_row_part.append(measure)
         

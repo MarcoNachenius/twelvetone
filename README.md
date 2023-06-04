@@ -1,16 +1,16 @@
 This library is designed for the creation, analysis and graphic representation of 12-tone music.
 
+The most developed part of this code at the moment is its ability to create an analytic score(.musicxml file) based on a tone row provided by the user. The score contains all of the row's prime transformations(R0, I0, RI0), as well as all of the transformations that are combinatorials(hexachordal, tetrachordal and trichordal) of the prime row. 
 
 SHORT INTRODUCTION
 ====================
 In Western music, the octave is divided into twelve equal parts that correspond to specific notes.
 This means that there are a total of 12 unique notes. 
 
-This program will use numerical values instead of note names to make the numerical logic clearer
-to a person who may not be familiar with how the relationship between pitch and note-names work in Western music.
-The reader only needs to understand how this principle works on a numerical level.
+This program primarily uses numerical values instead of note names. This should make the program somewhat more accessible to a user who may not be familiar with how the relationship between pitch and note-names work in Western music.
 
-Notes are ordered incrementally,
+The reader only needs to understand how this note ordering works on a numerical level.
+Notes are ordered incrementally:
 i.e. [0,1,2,3,4,5,6,7,8,9,10,11] = [C,C#,D,D#,E,F,Gb,G,G#,A,Bb,B]  
     ('C' was chosen as note 0 in order to conform to MIDI pitch numbering)
 
@@ -19,11 +19,8 @@ This series of notes repeats itself once the end of the index is reached. i.e.
 
 The distance between two notes is measured in semitones. For example,
 note 5 is two semitones higher than note 3 or four semitones lower than note 9.
-
-For example, note 1 can be understood to be two semitones above 11
-and three semitones below 10. This should lead the reader to the conclusion that
-the distance between 0 and 1 can be simultaneously be expressed as the note
-one semitone above 0 or eleven semitones below 0.
+Furthermore, note 1 can be understood to be two semitones above 11
+and three semitones below 10. 
 
 It is not important for the reader to know why or how this concept is implemented in music.
 It is only important to understand that one note may reach another by moving up or down a 
@@ -82,7 +79,7 @@ For example, the 12-tone matrix of the tone-row mentioned above will look as fol
   [2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0]
 
   [11, 2, 10, 3, 4, 6, 1, 8, 7, 0, 5, 9]
-  
+
   [3, 6, 2, 7, 8, 10, 5, 0, 11, 4, 9, 1]
 
   [10, 1, 9, 2, 3, 5, 0, 7, 6, 11, 4, 8]
