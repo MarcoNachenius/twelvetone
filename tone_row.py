@@ -1,4 +1,5 @@
 import numpy as np
+from note_names import note_names
 
 class tone_row (object): 
     
