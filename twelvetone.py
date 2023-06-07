@@ -53,10 +53,10 @@ class tone_row (object):
     @classmethod
     def generate_random_row(cls):
         """
-        Assigns a random 12-tone row as the primary row(P0).
+        Assigns a random 12-tone row.
         """
-        random_tone_row = list(range(12))
-        random.shuffle(random_tone_row)
+        random_tone_row = np.arange(12)
+        np.random.shuffle(random_tone_row)
         return random_tone_row
     
     @classmethod
