@@ -1,4 +1,3 @@
-import random
 import copy
 import numpy as np
 import music21
@@ -8,7 +7,7 @@ class tone_row (object):
     
     def __init__(self, tone_row = None, *args, **kwargs):
         if tone_row is None:
-            tone_row = []
+            tone_row = np.arange(12)
         self.__prime_row = tone_row
     
     @property
@@ -51,10 +50,11 @@ class tone_row (object):
         
 
     @classmethod
-    def generate_random_row(cls):
+    def generate_random_row(cls) -> np.ndarray:
         """
-        Assigns a random 12-tone row.
+        Returns a random tone row as a numpy array
         """
+        
         random_tone_row = np.arange(12)
         np.random.shuffle(random_tone_row)
         return random_tone_row
