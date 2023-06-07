@@ -925,6 +925,11 @@ class music_xml_writer():#WIP
             part = cls.create_tetrachord_combinatorial_part(transformations, prime_row)
             full_score.append(part)
         
+        combinatorial_trichords = combinatoriality.find_trichordal_combinatorials(prime_row)
+        for transformations in combinatorial_trichords:
+            part = cls.create_trichord_combinatorial_part(transformations, prime_row)
+            full_score.append(part)
+        
         return full_score
     
     @classmethod
@@ -1057,14 +1062,19 @@ class music_xml_writer():#WIP
 
 if __name__ == "__main__":
     
-    found_tetrachord = False
-    while not found_tetrachord:
+    found_single_combinatorials = False
+    while not found_single_combinatorials:
         prime_row = tone_row.generate_random_row()
-        tetrachords = combinatoriality.find_hexachordal_combinatorials(prime_row)
-        if len(tetrachords) > 0:
-            print("Row with tetrachordal combinatoriality has been found!")
+        trichords = combinatoriality.find_trichordal_combinatorials(prime_row)
+        tetrachords = combinatoriality.find_tetrachordal_combinatorials(prime_row)
+        hexachords = combinatoriality.find_hexachordal_combinatorials(prime_row)
+        
+        #creates a .musicxml report of a random tone row that that has 1 hexachordal,
+        #trichordal and tetrachordal combinatorial. 
+        if len(trichords) > 0 and len(tetrachords) > 0 and len(hexachords) > 0:
+            print("Row with trichordal combinatoriality has been found!")
             print(prime_row)
-            print(tetrachords)
+            print(trichords)
             music_xml_writer.write_twelvetone_report(prime_row, "test_file")
-            found_tetrachord = True
+            found_single_combinatorials = True
     #print(combinatoriality.find_tetrachordal_combinatorials(list(range(12))))
