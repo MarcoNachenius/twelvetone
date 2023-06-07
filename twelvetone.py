@@ -15,7 +15,7 @@ class tone_row (object):
         return self.__prime_row
 
     @prime_row.setter
-    def prime_row(self, tone_row: list):
+    def prime_row(self, tone_row: np.ndarray):
         self.__prime_row = tone_row
     
     @classmethod
@@ -43,10 +43,11 @@ class tone_row (object):
         "##" = double-sharp
         "bb" = double-flat
         """
-        numerical_list = [first_note, second_note, third_note, fourth_note, fifth_note, sixth_note, seventh_note, eighth_note, ninth_note, tenth_note, eleventh_note, twelfth_note]
-        for i, note in enumerate(numerical_list):
-            numerical_list[i] = note_names.note_to_number_relations[note]
-        return numerical_list
+        note_name_list = [first_note, second_note, third_note, fourth_note, fifth_note, sixth_note, seventh_note, eighth_note, ninth_note, tenth_note, eleventh_note, twelfth_note]
+        note_numbers = np.zeros(12)
+        for i, note in enumerate(note_name_list):
+            note_numbers[i] = note_names.note_to_number_relations[note]
+        return note_numbers
         
 
     @classmethod
