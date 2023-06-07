@@ -61,14 +61,13 @@ class tone_row (object):
         return random_tone_row
     
     @classmethod
-    def prime_retrograde(cls, prime_row: list):
+    def prime_retrograde(cls, prime_row: np.ndarray) -> np.ndarray:
         """
         Returns R0
         
         R0 is the retrograde of a given tone row that starts on the same note as the prime row.
         """
-        pr_retrograde = copy.deepcopy(prime_row)
-        pr_retrograde.reverse()
+        pr_retrograde = np.flip(prime_row)
         pr_retrograde = cls.transpose_row(pr_retrograde, prime_row[0] - pr_retrograde[0])
         return pr_retrograde
 
@@ -117,7 +116,7 @@ class tone_row (object):
         return [cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)]
     
     @classmethod
-    def transpose_row(cls, tone_row: np.ndarray, semitones: int):
+    def transpose_row(cls, tone_row: np.ndarray, semitones: int) -> np.ndarray:
         """
         Moves all notes in a tone row up(positive int) or down(negative int) by a 
         number or semitones.
@@ -1061,19 +1060,20 @@ class music_xml_writer():#WIP
 
 if __name__ == "__main__":
     
-    found_single_combinatorials = False
-    while not found_single_combinatorials:
-        prime_row = tone_row.generate_random_row()
-        trichords = combinatoriality.find_trichordal_combinatorials(prime_row)
-        tetrachords = combinatoriality.find_tetrachordal_combinatorials(prime_row)
-        hexachords = combinatoriality.find_hexachordal_combinatorials(prime_row)
-        
-        #creates a .musicxml report of a random tone row that that has 1 hexachordal,
-        #trichordal and tetrachordal combinatorial. 
-        if len(trichords) > 0 and len(tetrachords) > 0 and len(hexachords) > 0:
-            print("Row with trichordal combinatoriality has been found!")
-            print(prime_row)
-            print(trichords)
-            music_xml_writer.write_twelvetone_report(prime_row, "test_file")
-            found_single_combinatorials = True
+    print(tone_row.prime_retrograde(np.arange(12)))
+    #found_single_combinatorials = False
+    #while not found_single_combinatorials:
+    #    prime_row = tone_row.generate_random_row()
+    #    trichords = combinatoriality.find_trichordal_combinatorials(prime_row)
+    #    tetrachords = combinatoriality.find_tetrachordal_combinatorials(prime_row)
+    #    hexachords = combinatoriality.find_hexachordal_combinatorials(prime_row)
+    #    
+    #    #creates a .musicxml report of a random tone row that that has 1 hexachordal,
+    #    #trichordal and tetrachordal combinatorial. 
+    #    if len(trichords) > 0 and len(tetrachords) > 0 and len(hexachords) > 0:
+    #        print("Row with trichordal combinatoriality has been found!")
+    #        print(prime_row)
+    #        print(trichords)
+    #        music_xml_writer.write_twelvetone_report(prime_row, "test_file")
+    #        found_single_combinatorials = True
     #print(combinatoriality.find_tetrachordal_combinatorials(list(range(12))))
