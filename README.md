@@ -31,6 +31,14 @@ This form of composition has one fundamental principle:
 if a specific note is used, all other 11 notes must be used before it may be used again.
 This gave rise to the use of a tone-row. A tone-row is a pre-selected permutation of 12 unique notes. 
 
+TONE ROW TRANSFORMATIONS
+=========================
+
+TRANSPOSITION
+
+If every note of a tone row (or its inversion) is uniformly moved up or down by the same number of semitones,
+it is referred to as a transposition.
+
 Schoenberg found that a different, yet invariably related tone-row consisting of 12 unique notes that
 can be generated from the primary tone-row by means of inversion. 
 Creating a tone-row by inversion is achieved by reversing distance of traversal between every note of a tone row. 
@@ -39,37 +47,60 @@ Creating a tone-row by inversion is achieved by reversing distance of traversal 
 For example, if we take the tone-row [2,5,1,6,7,9,4,11,10,3,8,0] the distances between notes may be expressed as follows:
 
 2 (+3)
+
 5 (-4)
+
 1 (+5)
+
 6 (+1)
+
 7 (+2)
+
 9 (-5)
+
 4 (-5)
-11 (-1) 
+
+11 (-1)
+
 10 (+5)
+
 3 (+5)
+
 8 (+4)
+
 0
 
 
 By reversing the traversal of distance between every note, the inversion is generated as follows:
 
 2 (-3)
+
 11 (+4)
+
 3 (-5)
+
 10 (-1)
+
 9 (-2)
+
 7 (+5)
+
 0 (+5)
+
 5 (+1) 
+
 6 (-5)
+
 1 (-5)
+
 8 (-4)
+
 4
 
-If every note of a tone row (or its inversion) is uniformly moved up or down by the same number of semitones,
-it is referred to as a transposition. Schoenberg devised the 12-tone matrix as a way of representing every
-possible transposition. A 12-tone matrix is a 12*12 two-dimensional array. The first row of the array(read from
+TWELVE-TONE MATRIX
+===================
+Schoenberg devised the 12-tone matrix as a way of representing every
+possible transformation of a tone tone row. A 12-tone matrix is a 12*12 two-dimensional array. The first row of the array(read from
 left to right) is the primary tone-row. The first column(read from top to bottom) represents the inversion
 of the primary tone-row. Every row of the matrix is a unique transposition of the tone-row,
 and every column a unique transposition of the tone-row's inversion.
@@ -103,3 +134,74 @@ For example, the 12-tone matrix of the tone-row mentioned above will look as fol
 A notable feature of Schoenberg's 12-tone matrix is that every number spanning
 from top-left to bottom-right ([0][0], [1][1], [2][2], [3][3] etc.) will always be
 identical, regardless of which tone-row is used.
+
+TRANSFORMATION NAMES
+======================
+
+'P' refers to a specific transposition of the prime row.
+
+'P0' is the prime row
+
+
+'I' refers to a specific inversion of the prime row.
+
+'I0' is the prime inversion
+
+
+'R' refers to a specific retrograde(reverse order) of the prime row.
+
+'R0' is the prime retrograde
+
+
+'RI' refers to a specific retrograde of the prime row's inversion.
+
+'RI0' is the prime retrograde inversion
+
+
+For example, consider the matrix of the tone row [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:
+
+
+[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+[11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+[10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+
+[9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8]
+
+[8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7]
+
+[7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]
+
+[6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]
+
+[5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4]
+
+[4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3]
+
+[3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2]
+
+[2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]
+
+[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
+
+
+Here are some examples of how specific transpositions are written
+and what their values are:
+
+
+P0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+
+T7 = [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]
+
+I0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+I6 = [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7]
+
+R11 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]
+
+R0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]
+
+RI1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]
+
+RI6 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]

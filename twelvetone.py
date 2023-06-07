@@ -103,17 +103,18 @@ class tone_row (object):
         return pr_ret_inv
     
     @classmethod
-    def prime_transformations_list(cls, prime_row: list, include_prime_row = True):
+    def prime_transformations_list(cls, prime_row: np.ndarray, include_prime_row = True) -> np.ndarray:
         """
-        Returns a list of all prime transformations of a given row
+        Returns a numpy array of all prime transformations of a given row
         in the following order:\n
-        [P0, R0, I0, RI0]
+        [P0, R0, I0, RI0]\n
+        
+        Array includes prime row in position [0] by default
         """
-        
         if include_prime_row:
-            return [prime_row, cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)]
+            return np.array([prime_row, cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)])
         
-        return [cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)]
+        return np.array([cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)])
     
     @classmethod
     def transpose_row(cls, tone_row: np.ndarray, semitones: int) -> np.ndarray:
@@ -132,73 +133,45 @@ class tone_row (object):
         return (tone_row + semitone_distance) % 12
     
     @classmethod
-    def get_transformation(cls, tone_row: list, transformation: str):
+    def get_transformation(cls, prime_row: np.ndarray, transformation_name: str) -> np.ndarray:
         """
-        Transposition of a tone row occurs when all notes are moved up or
-        down by the same amount of semitones.\n
+        Returns a tone tow that corresponds to the specified transformation name
         
+        Transformations names:\n
         'P' refers to a specific transposition of the prime row.\n
-        'P0' is the prime row(first row of the matrix)\n
-        
+        'P0' is the prime row.\n
         'I' refers to a specific inversion of the prime row.\n
-        'I0' is the prime row(first row of the matrix)\n
-        
+        'I0' is the prime inversion.\n
         'R' refers to a specific retrograde(reverse order) of the prime row.\n
-        'R0' is the retrograde of the prime row(prime row in reverse order)\n
-        
+        'R0' is the prime retrograde.\n
         'RI' refers to a specific retrograde of the prime row's inversion.\n
-        'RI0' is the retrograde of the prime row's inversion(first column of the matrix read from down to up)\n
-        
-        For example, consider the matrix of the tone row [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]:\n
-        
-        [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]\n
-        [11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n
-        [10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n
-        [9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7, 8]\n
-        [8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6, 7]\n
-        [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]\n
-        [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]\n
-        [5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4]\n
-        [4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2, 3]\n
-        [3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1, 2]\n
-        [2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0, 1]\n
-        [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]\n
-        
-        Here are some examples of how specific transpositions are written
-        and what their values are:\n
-        
-        P0 = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]\n
-        T7 = [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]\n
-        I0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]\n
-        I6 = [6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7]\n
-        R11 = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]\n
-        R0 = [0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]\n
-        RI1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]\n
-        RI6 = [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]\n
+        'RI0' is the prime retrograde inversion.\n
         """
-        if transformation == "P0":
-            return tone_row
+        if transformation_name == "P0":
+            return prime_row
         
-        if transformation == "R0":
-            return cls.prime_retrograde(tone_row)
+        if transformation_name == "R0":
+            return cls.prime_retrograde(prime_row)
         
-        if transformation == "I0":
-            return cls.prime_inversion(tone_row)
+        if transformation_name == "I0":
+            return cls.prime_inversion(prime_row)
         
-        if transformation == "RI0":
-            return cls.prime_retrograde_inversion(tone_row)
+        if transformation_name == "RI0":
+            return cls.prime_retrograde_inversion(prime_row)
         
-        if transformation.startswith("P"):
-            return cls.transpose_row(tone_row, int(transformation[1:]))
+        if transformation_name.startswith("P"):
+            return cls.transpose_row(prime_row, int(transformation_name[1:]))
         
-        if transformation.startswith("RI"):
-            return cls.transpose_row(cls.prime_retrograde_inversion(tone_row), int(transformation[2:]))
+        if transformation_name.startswith("RI"):
+            return cls.transpose_row(cls.prime_retrograde_inversion(prime_row), int(transformation_name[2:]))
         
-        if transformation.startswith("R"):
-            return cls.transpose_row(cls.prime_retrograde(tone_row), int(transformation[1:]))
+        if transformation_name.startswith("R"):
+            return cls.transpose_row(cls.prime_retrograde(prime_row), int(transformation_name[1:]))
         
-        if transformation.startswith("I"):
-            return cls.transpose_row(cls.prime_inversion(tone_row), int(transformation[1:]))
+        if transformation_name.startswith("I"):
+            return cls.transpose_row(cls.prime_inversion(prime_row), int(transformation_name[1:]))
+        
+        raise ValueError("Invalid transformation name")
         
     @classmethod
     def find_transformations(cls, prime_row: list, transformed_row: list, find_all = False, row = False, inversion = False,  row_retrograde = False, inv_retrograde = False):
@@ -965,7 +938,7 @@ class music_xml_writer():#WIP
         return prime_row_part
     
     @classmethod
-    def create_hexachord_combinatorial_part(cls, transformation_name: str, prime_row: list):
+    def create_hexachord_combinatorial_part(cls, transformation_name: str, prime_row: list): 
         """
         Returns a music21 part object.
         Part consists of twelve stemless quarter notes with a hidden 12/4
@@ -1060,7 +1033,7 @@ class music_xml_writer():#WIP
 
 if __name__ == "__main__":
     
-    print(tone_row.prime_inversion(np.arange(12)))
+    print(tone_row.get_transformation(tone_row.generate_random_row(), "P0" ))
     #found_single_combinatorials = False
     #while not found_single_combinatorials:
     #    prime_row = tone_row.generate_random_row()

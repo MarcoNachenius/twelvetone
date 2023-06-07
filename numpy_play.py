@@ -1,6 +1,5 @@
 import numpy as np
 
-empty_arr = np.arange(12)
-g = empty_arr +15
-print(empty_arr * -1)
-print(g* -1)
+empty_arr = np.zeros((12,12))
+empty_arr[0] = np.arange(12)
+print(empty_arr)
