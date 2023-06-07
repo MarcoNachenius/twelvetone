@@ -213,6 +213,21 @@ class tone_row (object):
                 transformations.append(f"RI{str(i)}")
             
         return transformations
+    
+    @classmethod
+    def validate_row(cls, tone_row: np.ndarray):
+        """
+        Checks if a tone row is 12 notes long and consists of 
+        twelve unique notes.
+        
+        Raises ValueError if the parameters are not met.
+        """
+        if len(tone_row) != 12:
+            raise ValueError("Row provided is not the right length. (should be 12 tones long)")
+        sorted_row = copy.deepcopy(tone_row)
+        sorted_row.sort()
+        if sorted_row != list(range(12)):
+            raise ValueError("The provided tone row is not a valid 12-tone row")
 
 class twelve_tone_matrix():
     
