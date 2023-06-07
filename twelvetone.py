@@ -44,7 +44,7 @@ class tone_row (object):
         "bb" = double-flat
         """
         note_name_list = [first_note, second_note, third_note, fourth_note, fifth_note, sixth_note, seventh_note, eighth_note, ninth_note, tenth_note, eleventh_note, twelfth_note]
-        note_numbers = np.zeros(12)
+        note_numbers = np.zeros(12, dtype = int)
         for i, note in enumerate(note_name_list):
             note_numbers[i] = note_names.note_to_number_relations[note]
         return note_numbers
@@ -53,7 +53,7 @@ class tone_row (object):
     @classmethod
     def generate_random_row(cls) -> np.ndarray:
         """
-        Returns a random tone row as a numpy array
+        Returns a random twelve-tone row
         """
         
         random_tone_row = np.arange(12)
@@ -75,14 +75,16 @@ class tone_row (object):
     @classmethod
     def prime_inversion(cls, prime_row: np.ndarray) -> np.ndarray:
         """
-        Returns the prime inversion(I0) of a given tone row
+        Returns I0
+        
+        I0 is the inversion of the prime row
         """
-        semitone_differences = np.zeros(11)
+        semitone_differences = np.zeros(11, dtype = int)
         for i in range(11):
             semitone_differences[i] = prime_row[i+1] - prime_row[i]
         semitone_differences = semitone_differences * -1 #reverses distances between prime row notes
         semitone_differences = (semitone_differences + 12) % 12 
-        prime_inversion = np.zeros(12)
+        prime_inversion = np.zeros(12, dtype = int)
         prime_inversion[0] = prime_row[0]
         for i in range(1,12):
             prime_inversion[i] = prime_inversion[i-1] + semitone_differences[i-1]
@@ -124,11 +126,11 @@ class tone_row (object):
         
         Returns the transposed list as a numpy array
         """
-        if semitones not in range(-11, 12):
-            raise ValueError("Transposition above(+12 semites) or below(-12 semites) an octave is not allowed.")
         semitone_distance = semitones
-        if semitone_distance < 0:
-            semitone_distance += 12
+        if semitone_distance < 0 and semitone_distance < -12:
+            semitone_distance = ((semitone_distance + 12) * -1)
+        if semitone_distance < 0 and semitone_distance > -12:
+            semitone_distance += 12 
         
         return (tone_row + semitone_distance) % 12
     
@@ -174,7 +176,7 @@ class tone_row (object):
         raise ValueError("Invalid transformation name")
         
     @classmethod
-    def find_transformations(cls, prime_row: list, transformed_row: list, find_all = False, row = False, inversion = False,  row_retrograde = False, inv_retrograde = False):
+    def find_transformations(cls, prime_row: np.ndarray, transformed_row: np.ndarray, find_all = False, row = False, inversion = False,  row_retrograde = False, inv_retrograde = False) -> list:
         """
         Returns a list of transformations that apply to the primary row in relation to 
         a given tone row.
