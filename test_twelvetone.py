@@ -6,9 +6,9 @@ class test_tone_row(unittest.TestCase):
     
     def test_prime_row_transformations(self):
         prime_row = np.array([2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0])
-        self.assertEqual(tt.tone_row.prime_retrograde(prime_row), np.array([2, 10, 5, 0, 1, 6, 11, 9, 8, 3, 7, 4]))
-        self.assertEqual(tt.tone_row.prime_inversion(prime_row), np.array([2, 11, 3, 10, 9, 7, 0, 5, 6, 1, 8, 4]))
-        self.assertEqual(tt.tone_row.prime_retrograde_inversion(prime_row), np.array([2, 6, 11, 4, 3, 10, 5, 7, 8, 1, 9, 0]))
+        self.assertTrue(np.array_equal(tt.tone_row.prime_retrograde(prime_row), np.array([2, 10, 5, 0, 1, 6, 11, 9, 8, 3, 7, 4])))
+        self.assertTrue(np.array_equal(tt.tone_row.prime_inversion(prime_row), np.array([2, 11, 3, 10, 9, 7, 0, 5, 6, 1, 8, 4])))
+        self.assertTrue(np.array_equal(tt.tone_row.prime_retrograde_inversion(prime_row), np.array([2, 6, 11, 4, 3, 10, 5, 7, 8, 1, 9, 0])))
     
     def test_transpositions(self):
         prime_row = np.array([6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1])
@@ -17,32 +17,32 @@ class test_tone_row(unittest.TestCase):
         unison = tt.tone_row.transpose_row(prime_row, 12)
         tritone_up = tt.tone_row.transpose_row(prime_row, 6)
         tritone_down = tt.tone_row.transpose_row(prime_row, -6)
-        self.assertEqual(octave_up, np.array([6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1]))
-        self.assertEqual(two_octaves_down, np.array([6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1]))
-        self.assertEqual(unison, np.array([6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1]))
-        self.assertEqual(tritone_up, np.array([0, 4, 11, 9, 10, 1, 3, 6, 8, 2, 5, 7]))
-        self.assertEqual(tritone_down, np.array([0, 4, 11, 9, 10, 1, 3, 6, 8, 2, 5, 7]))
+        self.assertTrue(np.array_equal(octave_up, np.array([6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1])))
+        self.assertTrue(np.array_equal(two_octaves_down, np.array([6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1])))
+        self.assertTrue(np.array_equal(unison, np.array([6, 10, 5, 3, 4, 7, 9, 0, 2, 8, 11, 1])))
+        self.assertTrue(np.array_equal(tritone_up, np.array([0, 4, 11, 9, 10, 1, 3, 6, 8, 2, 5, 7])))
+        self.assertTrue(np.array_equal(tritone_down, np.array([0, 4, 11, 9, 10, 1, 3, 6, 8, 2, 5, 7])))
     
     def test_return_transformation(self):
         tc_tone_row = tt.tone_row()
         tc_tone_row.prime_row = np.arange(12)
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "P0"), np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]))
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "P7"), np.array([7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6]))
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "I0"), np.array([0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]))
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "I6"), np.array([6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7]))
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "R11"), np.array([11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0]))
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "R0"), np.array([0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]))
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "RI1"), np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0]))
-        self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "RI6"), np.array([6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5]))
+        self.assertTrue(np.array_equal(tt.tone_row.get_transformation(tc_tone_row.prime_row, "P0"), np.array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11])))
+        self.assertTrue(np.array_equal(tt.tone_row.get_transformation(tc_tone_row.prime_row, "P7"), np.array([7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6])))
+        self.assertTrue(np.array_equal(tt.tone_row.get_transformation(tc_tone_row.prime_row, "I0"), np.array([0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])))
+        self.assertTrue(np.array_equal(tt.tone_row.get_transformation(tc_tone_row.prime_row, "I6"), np.array([6, 5, 4, 3, 2, 1, 0, 11, 10, 9, 8, 7])))
+        self.assertTrue(np.array_equal(tt.tone_row.get_transformation(tc_tone_row.prime_row, "R11"), np.array([11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0])))
+        self.assertTrue(np.array_equal(tt.tone_row.get_transformation(tc_tone_row.prime_row, "R0"), np.array([0, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1])))
+        self.assertTrue(np.array_equal(tt.tone_row.get_transformation(tc_tone_row.prime_row, "RI1"), np.array([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 0])))
+        self.assertTrue(np.array_equal(tt.tone_row.get_transformation(tc_tone_row.prime_row, "RI6"), np.array([6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5])))
         
     def test_convert_note_to_numbers(self):
-        self.assertEqual(tt.tone_row.convert_notes_to_numbers("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"), np.arange(12))
+        self.assertTrue(np.array_equal(tt.tone_row.convert_notes_to_numbers("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"), np.arange(12)))
     
 class test_twelve_tone_matrix(unittest.TestCase):
     
     def test_matrix(self):
-        prime_row = [2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0]
-        self.assertEqual(tt.twelve_tone_matrix.generate_twelve_tone_matrix(prime_row), np.array(
+        prime_row = np.array([2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0])
+        self.assertTrue(np.array_equal(tt.twelve_tone_matrix.generate_twelve_tone_matrix(prime_row), np.array(
                                             [[2, 5, 1, 6, 7, 9, 4, 11, 10, 3, 8, 0], 
                                             [11, 2, 10, 3, 4, 6, 1, 8, 7, 0, 5, 9], 
                                             [3, 6, 2, 7, 8, 10, 5, 0, 11, 4, 9, 1], 
@@ -54,7 +54,7 @@ class test_twelve_tone_matrix(unittest.TestCase):
                                             [6, 9, 5, 10, 11, 1, 8, 3, 2, 7, 0, 4], 
                                             [1, 4, 0, 5, 6, 8, 3, 10, 9, 2, 7, 11], 
                                             [8, 11, 7, 0, 1, 3, 10, 5, 4, 9, 2, 6], 
-                                            [4, 7, 3, 8, 9, 11, 6, 1, 0, 5, 10, 2]]))
+                                            [4, 7, 3, 8, 9, 11, 6, 1, 0, 5, 10, 2]])))
     
     def test_find_transformations(self):
         prime_row = np.arange(12)
