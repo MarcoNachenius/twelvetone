@@ -73,22 +73,22 @@ class tone_row (object):
 
     
     @classmethod
-    def prime_inversion(cls, prime_row: list):
+    def prime_inversion(cls, prime_row: np.ndarray) -> np.ndarray:
         """
-        Returns the inversion(I0) of a given tone row
+        Returns the prime inversion(I0) of a given tone row
         """
-        row_inversion = [prime_row[0]]
-        
+        semitone_differences = np.zeros(11)
+        for i in range(11):
+            semitone_differences[i] = prime_row[i+1] - prime_row[i]
+        semitone_differences = semitone_differences * -1 #inverts semitone distances between notes
+        semitone_differences = (semitone_differences + 12) % 12 
+        prime_inversion = np.zeros(12)
+        prime_inversion[0] = prime_row[0]
         for i in range(1,12):
-            semitones = prime_row[i] - prime_row[i-1]
-            row_inversion.append(row_inversion[i-1] - semitones)
-            if row_inversion[i] > 11:
-                row_inversion[i] -= 12
-                continue
-            if row_inversion[i] < 0:
-                row_inversion[i] += 12
+            prime_inversion[i] = prime_inversion[i-1] + semitone_differences[i-1]
+        prime_inversion %=  12
         
-        return row_inversion
+        return prime_inversion
     
     @classmethod
     def prime_retrograde_inversion(cls, prime_row: list):
@@ -110,6 +110,7 @@ class tone_row (object):
         in the following order:\n
         [P0, R0, I0, RI0]
         """
+        
         if include_prime_row:
             return [prime_row, cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)]
         
@@ -1060,7 +1061,7 @@ class music_xml_writer():#WIP
 
 if __name__ == "__main__":
     
-    print(tone_row.prime_retrograde(np.arange(12)))
+    print(tone_row.prime_inversion(np.arange(12)))
     #found_single_combinatorials = False
     #while not found_single_combinatorials:
     #    prime_row = tone_row.generate_random_row()
