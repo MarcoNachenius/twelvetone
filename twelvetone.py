@@ -80,7 +80,7 @@ class tone_row (object):
         semitone_differences = np.zeros(11)
         for i in range(11):
             semitone_differences[i] = prime_row[i+1] - prime_row[i]
-        semitone_differences = semitone_differences * -1 #inverts semitone distances between notes
+        semitone_differences = semitone_differences * -1 #reverses distances between prime row notes
         semitone_differences = (semitone_differences + 12) % 12 
         prime_inversion = np.zeros(12)
         prime_inversion[0] = prime_row[0]
@@ -91,16 +91,15 @@ class tone_row (object):
         return prime_inversion
     
     @classmethod
-    def prime_retrograde_inversion(cls, prime_row: list):
+    def prime_retrograde_inversion(cls, prime_row: np.ndarray) -> np.ndarray:
         """
         Returns RI0
         
         RI0 is the retrograde inversion of a tone row that 
         starts on the same note as the prime row
         """
-        pr_ret_inv = cls.prime_inversion(prime_row)
-        pr_ret_inv.reverse()
-        pr_ret_inv = cls.transpose_row(pr_ret_inv, prime_row[0] -pr_ret_inv[0])
+        pr_ret_inv = np.flip(cls.prime_inversion(prime_row))
+        pr_ret_inv = cls.transpose_row(pr_ret_inv, prime_row[0] - pr_ret_inv[0])
         return pr_ret_inv
     
     @classmethod
