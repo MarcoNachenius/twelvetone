@@ -19,7 +19,7 @@ class tone_row (object):
         self.__prime_row = tone_row
     
     @classmethod
-    def convert_note_to_numbers(cls, first_note: str,
+    def convert_notes_to_numbers(cls, first_note: str,
                                 second_note: str,
                                 third_note: str,
                                 fourth_note: str,
@@ -30,7 +30,7 @@ class tone_row (object):
                                 ninth_note: str,
                                 tenth_note: str,
                                 eleventh_note: str,
-                                twelfth_note: str):
+                                twelfth_note: str) -> np.ndarray:
         """
         Converts arguments(note names of tone row) into a list of numerical values that correspond to
         the project's numerical convention for note names("C" = 0, "C#"/"Db" = 1, "D" = 2, etc).
@@ -113,26 +113,24 @@ class tone_row (object):
         """
         if include_prime_row:
             return [prime_row, cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)]
+        
         return [cls.prime_retrograde(prime_row), cls.prime_inversion(prime_row), cls.prime_retrograde_inversion(prime_row)]
     
     @classmethod
-    def transpose_row(cls, tone_row: list, semitones: int):
+    def transpose_row(cls, tone_row: np.ndarray, semitones: int):
         """
         Moves all notes in a tone row up(positive int) or down(negative int) by a 
         number or semitones.
         
-        Returns the transposed list
+        Returns the transposed list as a numpy array
         """
-        transposed_row = copy.deepcopy(tone_row)
-        transposed_row = [note + semitones for note in transposed_row]
-        for i in range(12):
-            if transposed_row[i] > 11:
-                transposed_row[i] -= 12
-                continue
-            if transposed_row[i] < 0:
-                transposed_row[i] += 12
+        if semitones not in range(-11, 12):
+            raise ValueError("Transposition above(+12 semites) or below(-12 semites) an octave is not allowed.")
+        semitone_distance = semitones
+        if semitone_distance < 0:
+            semitone_distance += 12
         
-        return transposed_row
+        return (tone_row + semitone_distance) % 12
     
     @classmethod
     def get_transformation(cls, tone_row: list, transformation: str):

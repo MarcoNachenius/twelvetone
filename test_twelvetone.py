@@ -36,7 +36,7 @@ class test_tone_row(unittest.TestCase):
         self.assertEqual(tt.tone_row.get_transformation(tc_tone_row.prime_row, "RI6"), [6, 7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5])
         
     def test_convert_note_to_numbers(self):
-        self.assertEqual(tt.tone_row.convert_note_to_numbers("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"), np.arange(12))
+        self.assertEqual(tt.tone_row.convert_notes_to_numbers("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"), np.arange(12))
     
 class test_twelve_tone_matrix(unittest.TestCase):
     
