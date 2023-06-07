@@ -224,35 +224,29 @@ class tone_row (object):
         """
         if len(tone_row) != 12:
             raise ValueError("Row provided is not the right length. (should be 12 tones long)")
-        sorted_row = copy.deepcopy(tone_row)
-        sorted_row.sort()
-        if sorted_row != list(range(12)):
+        sorted_row = np.sort(tone_row)
+        reference_row = np.arange(12)
+        if sorted_row.all() != reference_row.all():
             raise ValueError("The provided tone row is not a valid 12-tone row")
 
 class twelve_tone_matrix():
     
     @classmethod
-    def generate_twelve_tone_matrix(cls, prime_row: list):
+    def generate_twelve_tone_matrix(cls, prime_row: np.ndarray):
         """
         Returns a twelve-tone matrix(two-dimensional 12*12 array)
-        based on a given 12-tone row. 
-        P0 is always the first row([0:0] -> [0:12]) and
+        based on a given 12-tone row. \n
+        P0 is always the first row([0:0] -> [0:12])\n
         I0 is always the first column ([0:0] -> [12:0])
         """
-        if len(prime_row) != 12:
-            raise ValueError("Row provided is not the right length. (should be 12 tones long)")
-        sorted_row = copy.deepcopy(prime_row)
-        sorted_row.sort()
-        if sorted_row != list(range(12)):
-            raise ValueError("The provided tone row is not a valid 12-tone row")
-        matrix = [prime_row]
-        for i in tone_row.prime_inversion(prime_row):
-            if i == prime_row[0]:
-                continue
-            interval = i - prime_row[0]
-            if interval < 0:
-                interval += 12
-            matrix.append(tone_row.transpose_row(prime_row, interval))
+        tone_row.validate_row(prime_row)
+        matrix = np.zeros((12,12))
+        matrix[0] = prime_row # add first row
+        very_first_note = prime_row[0]
+        first_column = tone_row.prime_inversion(prime_row)
+        for i in range(1, 12):
+            semitone_difference = first_column[i] - very_first_note
+            matrix[i] = tone_row.transpose_row(prime_row, semitone_difference)
         return matrix
     
     @classmethod
@@ -1050,7 +1044,7 @@ class music_xml_writer():#WIP
 
 if __name__ == "__main__":
     
-    print(tone_row.get_transformation(tone_row.generate_random_row(), "P0" ))
+    print(twelve_tone_matrix.generate_twelve_tone_matrix(tone_row.generate_random_row()))
     #found_single_combinatorials = False
     #while not found_single_combinatorials:
     #    prime_row = tone_row.generate_random_row()
