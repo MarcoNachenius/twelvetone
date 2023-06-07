@@ -197,19 +197,19 @@ class tone_row (object):
             inv_retrograde = True
         transformations = []
         for i in range(12):
-            if row and transformed_row == cls.transpose_row(prime_row, i):
+            if row and np.array_equal(transformed_row, cls.transpose_row(prime_row, i)):
                 transformations.append(f"P{str(i)}")
             
-            if row_retrograde and transformed_row == cls.transpose_row(
-                cls.prime_retrograde(prime_row), i):
+            if row_retrograde and np.array_equal(transformed_row, cls.transpose_row(
+                cls.prime_retrograde(prime_row), i)):
                 transformations.append(f"R{str(i)}")
             
-            if inversion and transformed_row == cls.transpose_row(
-                cls.prime_inversion(prime_row), i):
+            if inversion and np.array_equal(transformed_row, cls.transpose_row(
+                cls.prime_inversion(prime_row), i)):
                 transformations.append(f"I{str(i)}")
             
-            if inv_retrograde and transformed_row == cls.transpose_row(
-                cls.prime_retrograde_inversion(prime_row), i):
+            if inv_retrograde and np.array_equal(transformed_row, cls.transpose_row(
+                cls.prime_retrograde_inversion(prime_row), i)):
                 transformations.append(f"RI{str(i)}")
             
         return transformations
@@ -232,7 +232,7 @@ class tone_row (object):
 class twelve_tone_matrix():
     
     @classmethod
-    def generate_twelve_tone_matrix(cls, prime_row: np.ndarray):
+    def generate_twelve_tone_matrix(cls, prime_row: np.ndarray) -> np.ndarray:
         """
         Returns a twelve-tone matrix(two-dimensional 12*12 array)
         based on a given 12-tone row. \n
@@ -240,7 +240,7 @@ class twelve_tone_matrix():
         I0 is always the first column ([0:0] -> [12:0])
         """
         tone_row.validate_row(prime_row)
-        matrix = np.zeros((12,12))
+        matrix = np.zeros((12,12), dtype=int)
         matrix[0] = prime_row # add first row
         very_first_note = prime_row[0]
         first_column = tone_row.prime_inversion(prime_row)
@@ -250,7 +250,7 @@ class twelve_tone_matrix():
         return matrix
     
     @classmethod
-    def row_order(cls, prime_row):
+    def row_order(cls, prime_row: np.ndarray) -> list:
         """
         Returns the order of row transpositions of 
         the 12-tone matrix from top to bottom
