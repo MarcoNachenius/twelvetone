@@ -91,8 +91,8 @@ class music_xml_writer():
         measure = music21.stream.Measure()
         measure.timeSignature = music21.meter.TimeSignature('12/4')
         measure.timeSignature.style.hideObjectOnPrint = True
-        pr_part_notes = tone_row.get_transformation(prime_row, transformation_name)
-        note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
+        pr_part_note_numbers = tone_row.get_transformation(prime_row, transformation_name)
+        pr_part_notes = note_names.convert_numbers_to_note_names(pr_part_note_numbers, note_names.number_to_sharp_treble_clef_positions)
         for pitch in pr_part_notes:
             note = music21.note.Note(pitch)
             note.stemDirection = "noStem"
