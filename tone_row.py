@@ -30,16 +30,16 @@ class tone_row (object):
                                 eleventh_note: str,
                                 twelfth_note: str) -> np.ndarray:
         """
-        Converts arguments(note names of tone row) into a list of numerical values that correspond to
-        the project's numerical convention for note names("C" = 0, "C#"/"Db" = 1, "D" = 2, etc).
-        
+        Converts note names of tone row into a list of numerical values('C' = 0) that correspond to
+        the project's numerical convention for note names( "C#"/"Db" = 1, "D" = 2, "D#"/"Eb" = 3 etc).
+        \n
         Note names are to be entered in uppercase. 
-        
-        Accidental symbols:
-        "#" = sharp
-        "b" = flat
-        "##" = double-sharp
-        "bb" = double-flat
+        \n
+        Accidental symbols:\n
+        "#" = sharp\n
+        "b" = flat\n
+        "##" = double-sharp\n
+        "bb" = double-flat\n
         """
         note_name_list = [first_note, second_note, third_note, fourth_note, fifth_note, sixth_note, seventh_note, eighth_note, ninth_note, tenth_note, eleventh_note, twelfth_note]
         note_numbers = np.zeros(12, dtype = int)
