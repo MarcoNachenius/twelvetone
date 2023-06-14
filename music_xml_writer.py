@@ -1,10 +1,14 @@
 import music21
 import os
+import numpy as np
+from combinatoriality import combinatoriality
+from note_names import note_names
+from tone_row import tone_row
 
 class music_xml_writer():
     
     @classmethod
-    def write_twelvetone_report(cls, prime_row: list, file_name: str, directory = None, score_title = None, include_combinatorials = True):
+    def write_twelvetone_report(cls, prime_row: np.ndarray, file_name: str, directory = None, score_title = None, include_combinatorials = True):
         """
         Creates a .musicxml file with parts in the following order:\n
         -P0\n
@@ -30,7 +34,7 @@ class music_xml_writer():
         print("\n=========================\nFile successfully written\n=========================")
     
     @classmethod
-    def create_twelve_tone_report_xml(cls, prime_row: list, score_title = None, include_combinatorials = True):
+    def create_twelve_tone_report_xml(cls, prime_row: np.ndarray, score_title = None, include_combinatorials = True):
         """
         Returns a .musicxml file with parts in the following order:\n
         -P0\n
@@ -77,7 +81,7 @@ class music_xml_writer():
         return full_score
     
     @classmethod
-    def create_stemless_measure(cls, transformation_name: str, prime_row: list):
+    def create_stemless_measure(cls, transformation_name: str, prime_row: np.ndarray):
         """
         Returns a music21 measure object.
         Part consists of twelve stemless quarter notes with a hidden 12/4
@@ -87,7 +91,7 @@ class music_xml_writer():
         measure = music21.stream.Measure()
         measure.timeSignature = music21.meter.TimeSignature('12/4')
         measure.timeSignature.style.hideObjectOnPrint = True
-        pr_part_notes = copy.deepcopy((tone_row.get_transformation(prime_row, transformation_name)))
+        pr_part_notes = tone_row.get_transformation(prime_row, transformation_name)
         note_names.convert_numbers_to_note_names(pr_part_notes, note_names.number_to_sharp_treble_clef_positions)
         for pitch in pr_part_notes:
             note = music21.note.Note(pitch)
@@ -97,7 +101,7 @@ class music_xml_writer():
         return measure
     
     @classmethod
-    def create_prime_transformation_part(cls, prime_transformation_name: str, prime_row: list):
+    def create_prime_transformation_part(cls, prime_transformation_name: str, prime_row: np.ndarray):
         """
         Returns a music21 part object.
         Part consists of twelve stemless quarter notes with a hidden 12/4
@@ -111,7 +115,7 @@ class music_xml_writer():
         return prime_row_part
     
     @classmethod
-    def create_hexachord_combinatorial_part(cls, transformation_name: str, prime_row: list): 
+    def create_hexachord_combinatorial_part(cls, transformation_name: str, prime_row: np.ndarray): 
         """
         Returns a music21 part object.
         Part consists of twelve stemless quarter notes with a hidden 12/4
@@ -134,7 +138,7 @@ class music_xml_writer():
         return hex_row_part
     
     @classmethod
-    def create_tetrachord_combinatorial_part(cls, transformation_name: str, prime_row: list):
+    def create_tetrachord_combinatorial_part(cls, transformation_name: str, prime_row: np.ndarray):
         """
         Returns a music21 part object.
         Part consists of twelve stemless quarter notes with a hidden 12/4
@@ -159,7 +163,7 @@ class music_xml_writer():
         return tetra_row_part
     
     @classmethod
-    def create_trichord_combinatorial_part(cls, transformation_name: str, prime_row: list):
+    def create_trichord_combinatorial_part(cls, transformation_name: str, prime_row: np.ndarray):
         """
         Returns a music21 part object.
         Part consists of twelve stemless quarter notes with a hidden 12/4
