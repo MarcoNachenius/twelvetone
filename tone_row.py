@@ -17,6 +17,34 @@ class tone_row (object):
         self.__prime_row = tone_row
     
     @classmethod
+    def row_interval_sizes(cls, tone_row: np.ndarray) -> np.ndarray:
+        """
+        Calculates the number of semitones between notes of a tone row
+        from left to right.\n
+        Negative numbers indicate downward traversal by a number of semitones.
+        Positive numbers indicate upward traversal by a number of semitones.\n
+        Range of numbers = [-5: 7]
+        
+        Args:
+            tone_row (np.ndarray): 12-tone row
+            
+        Returns:
+            np.ndarray: Differemce in semitones (length = 11)
+        """
+        interval_sizes = np.zeros(11, dtype=int)
+        for i in range(11):
+            interval_sizes[i] = tone_row[i+1] - tone_row[i]
+            if interval_sizes[i] > 6:
+                interval_sizes[i] -= 12
+            
+            if interval_sizes[i] < -5:
+                interval_sizes[i] += 12
+        
+        return interval_sizes
+    
+    
+    
+    @classmethod
     def convert_notes_to_numbers(cls, first_note: str,
                                 second_note: str,
                                 third_note: str,
@@ -126,7 +154,7 @@ class tone_row (object):
         """
         semitone_distance = semitones
         if semitone_distance < 0 and semitone_distance < -12:
-            semitone_distance = ((semitone_distance + 12) * -1)
+            semitone_distance = (semitone_distance + 12) * -1
         if semitone_distance < 0 and semitone_distance > -12:
             semitone_distance += 12 
         
