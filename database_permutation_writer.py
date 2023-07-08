@@ -171,6 +171,7 @@ class permutation_calculator():
             mask = np.isin(all_options, tone_row[:i])
             #Filter all_options using the mask to remove the values
             remaining_options = all_options[~mask]
+            
             rem_index_num = row_number % math.factorial(len(remaining_options))
             index_number = math.floor(rem_index_num/math.factorial(len(remaining_options)-1))
             tone_row[i] = remaining_options[index_number]
@@ -179,29 +180,43 @@ class permutation_calculator():
     
     
 @dataclass
-class tone_row_entry:
+class all_value_entry:
     row_id: int = None
+    #prime transformations
     P0: np.ndarray = None
     R0: np.ndarray = None
     I0: np.ndarray = None
     RI0: np.ndarray = None
+    #interval sizes of prime transformations 
+    P0_intervals: np.ndarray = None
+    R0_intervals: np.ndarray = None
+    I0_intervals: np.ndarray = None
+    RI0_intervals: np.ndarray = None
+    #combinatorials
     combinatorial_hexachords: list = None
     combinatorial_tetrachords: list = None
     combinatorial_trichords: list = None
     
-class database_entry():
+class create_database_entry():
     
     @classmethod
-    def create_database_entry(cls, row_number: int) -> tone_row_entry:
-        entry = tone_row_entry()
+    def all_values_entry(cls, row_number: int) -> all_value_entry:
+        entry = all_value_entry()
         entry.row_id = row_number
+        #prime transformations
         entry.P0 = np.append(np.zeros(1, dtype=int), permutation_calculator.find_permutation(row_number) + 1)
         entry.R0 = tone_row.prime_retrograde(entry.P0)
         entry.I0 = tone_row.prime_inversion(entry.P0)
         entry.RI0 = tone_row.prime_retrograde_inversion(entry.P0)
-        entry.combinatorial_hexachords = combinatoriality.find_hexachordal_combinatorials(entry.P0)
-        entry.combinatorial_tetrachords = combinatoriality.find_tetrachordal_combinatorials(entry.P0)
-        entry.combinatorial_trichords = str(combinatoriality.find_trichordal_combinatorials(entry.P0))
+        #interval sizes of prime transformations 
+        entry.P0_intervals = tone_row.row_interval_sizes(entry.P0)
+        entry.R0_intervals = tone_row.row_interval_sizes(entry.R0)
+        entry.I0_intervals = tone_row.row_interval_sizes(entry.I0)
+        entry.RI0_intervals = tone_row.row_interval_sizes(entry.RI0)
+        #combinatorials
+        entry.combinatorial_hexachords = tuple(combinatoriality.find_hexachordal_combinatorials(entry.P0))
+        entry.combinatorial_tetrachords = tuple(combinatoriality.find_tetrachordal_combinatorials(entry.P0))
+        entry.combinatorial_trichords = tuple(combinatoriality.find_trichordal_combinatorials(entry.P0))
         
         return entry
         
@@ -210,4 +225,5 @@ class database_entry():
 
 
 
-g = database_entry.create_database_entry(0)
+g = create_database_entry.all_values_entry(0)
+print(g)
