@@ -1,3 +1,4 @@
+import numpy as np
 class note_names():
     
     @classmethod
@@ -105,19 +106,14 @@ class note_names():
         }
     
     @classmethod
-    def convert_numbers_to_note_names(cls, note_number_list: list, dictionary: dict):
+    def convert_numbers_to_note_names(cls, note_number_list: np.ndarray, number_to_note_dictionary: dict) -> list:
         """
-        Converts all of the numbers in a tone row(list) or list of tone rows(single-nested list)
-        to note names, based on the provided dictionary.
+        Converts all of the numbers in a tone row
+        to note names, from values of the provided dictionary.
         
         This function does not return a new list, it simply alters the existing list.
         """
-        if isinstance(note_number_list[0], int):
-            for i, note_number in enumerate(note_number_list):
-                note_number_list[i] = dictionary[note_number]
-            return
-        
-        if isinstance(note_number_list[0], list) and isinstance(note_number_list[0][0], int):
-            for tone_row in note_number_list:
-                for i, note_number in enumerate(tone_row):
-                    tone_row[i] = dictionary[note_number]
+        return [
+            number_to_note_dictionary[note_number]
+            for note_number in note_number_list
+        ]

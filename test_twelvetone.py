@@ -1,12 +1,14 @@
 
 import unittest
 import numpy as np
+import math
 from tone_row import tone_row
 from music_xml_writer import music_xml_writer
 from note_names import note_names
 from intervals import intervals
 from combinatoriality import combinatoriality
 from twelve_tone_matrix import twelve_tone_matrix
+from database_permutation_writer import permutation_calculator
 
 
 class test_tone_row(unittest.TestCase):
@@ -44,6 +46,10 @@ class test_tone_row(unittest.TestCase):
         
     def test_convert_note_to_numbers(self):
         self.assertTrue(np.array_equal(tone_row.convert_notes_to_numbers("C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"), np.arange(12)))
+    
+    def test_row_interval_sizes(self):
+        tc_interval_sizes = np.ones(11, dtype=int)
+        self.assertTrue(np.array_equal(tone_row.row_interval_sizes(np.arange(12)), tc_interval_sizes))
     
 class test_twelve_tone_matrix(unittest.TestCase):
     
@@ -104,6 +110,18 @@ class test_combinatoriality(unittest.TestCase):
         prime_row = [10, 8, 0, 9, 4, 6, 3, 7, 1, 5, 11, 2]
         self.assertEqual(combinatoriality.find_hexachordal_combinatorials(prime_row), ['RI11'])
     
+
+class test_note_names(unittest.TestCase):
     
+    def test_convert_numbers_to_note_names(self):
+        prime_row = np.arange(12)
+        self.assertEqual(note_names.convert_numbers_to_note_names(prime_row, note_names.number_to_sharp_treble_clef_positions), ['C5', 'C#5', 'D5', 'D#5', 'E5', 'F4', 'F#4', 'G4', 'G#4', 'A4', 'A#4', 'B4'])
+
+class test_database_permutation_writer(unittest.TestCase):
+    
+    def test_find_permutation(self):
+        self.assertTrue(np.array_equal(permutation_calculator.find_permutation(0, 5), np.arange(5)))
+        self.assertTrue(np.array_equal(permutation_calculator.find_permutation(119, 5), np.flip(np.arange(5))))
+
 if __name__ == '__main__':
     unittest.main()
