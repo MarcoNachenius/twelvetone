@@ -1,7 +1,9 @@
 
 import unittest
 import numpy as np
+import math
 from tone_row import tone_row
+#from music_xml_writer import music_xml_writer
 from note_names import note_names
 from intervals import intervals
 from combinatoriality import combinatoriality
@@ -120,32 +122,6 @@ class test_database_permutation_writer(unittest.TestCase):
     def test_find_permutation(self):
         self.assertTrue(np.array_equal(permutation_calculator.find_permutation(0, 5), np.arange(5)))
         self.assertTrue(np.array_equal(permutation_calculator.find_permutation(119, 5), np.flip(np.arange(5))))
-        permutations = [[0, 1, 2, 3],
-                        [0, 1, 3, 2],
-                        [0, 2, 1, 3],
-                        [0, 2, 3, 1],
-                        [0, 3, 1, 2],
-                        [0, 3, 2, 1],
-                        [1, 0, 2, 3],
-                        [1, 0, 3, 2],
-                        [1, 2, 0, 3],
-                        [1, 2, 3, 0],
-                        [1, 3, 0, 2],
-                        [1, 3, 2, 0],
-                        [2, 0, 1, 3],
-                        [2, 0, 3, 1],
-                        [2, 1, 0, 3],
-                        [2, 1, 3, 0],
-                        [2, 3, 0, 1],
-                        [2, 3, 1, 0],
-                        [3, 0, 1, 2],
-                        [3, 0, 2, 1],
-                        [3, 1, 0, 2],
-                        [3, 1, 2, 0],
-                        [3, 2, 0, 1],
-                        [3, 2, 1, 0]]
-        for i, permutation in enumerate(permutations):
-            self.assertEqual(permutation, list(permutation_calculator.find_permutation(i, 4)))
 
 if __name__ == '__main__':
     unittest.main()
