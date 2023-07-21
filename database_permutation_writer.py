@@ -172,14 +172,14 @@ class permutation_calculator():
 
         truncated_row_number = row_number
         for i in range(1, row_length):
-            #print(f"i: {i}")
+            print(f"i: {i}")
             # Get remaining options
             # Create a Boolean mask of elements in all_options that are present in tone_row
             mask = np.isin(all_options, tone_row[:i])
             # Filter all_options using the mask to remove the values
             remaining_options = all_options[~mask]
-            #print("calculated values: "  + str(tone_row[:i]))
-            #print("Remaining options: " + str(remaining_options))
+            print("calculated values: "  + str(tone_row[:i]))
+            print("Remaining options: " + str(remaining_options))
             # Update truncated_row_number for the next iteration
             truncated_row_number %= math.factorial(len(remaining_options))
             # Update index_number and truncated_row_number based on the length of remaining_options
@@ -232,4 +232,4 @@ class create_database_entry():
         
         return entry
 
-permutation_calculator.find_permutation(100)
+print(permutation_calculator.find_permutation(100))
