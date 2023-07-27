@@ -150,7 +150,7 @@ Index number: 23  Remaining notes: []    Final set: [D, C, B, A]
 class permutation_calculator():
     
     @classmethod
-    def find_permutation(cls, row_number: int, row_length = 11) -> np.ndarray:
+    def find_permutation(cls, row_number: int, row_length = 12) -> np.ndarray:
         """
         Returns the tone row that would be located at a
         specific row number within a database containing
@@ -202,7 +202,7 @@ class create_database_entry():
     def all_values_entry(cls, row_number: int) -> all_value_entry:
         entry = all_value_entry()
         #prime transformations
-        entry.P0 = np.append(np.zeros(1, dtype=int), permutation_calculator.find_permutation(row_number))
+        entry.P0 = permutation_calculator.find_permutation(row_number)
         entry.R0 = tone_row.prime_retrograde(entry.P0)
         entry.I0 = tone_row.prime_inversion(entry.P0)
         entry.RI0 = tone_row.prime_retrograde_inversion(entry.P0)
@@ -218,4 +218,5 @@ class create_database_entry():
         
         return entry
         
-        
+
+

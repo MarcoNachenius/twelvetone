@@ -220,7 +220,7 @@ class create_database_entry():
         
         return entry
         
-        
+permutation_calculator.find_permutation(15621)
 
 
 

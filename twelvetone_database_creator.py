@@ -29,7 +29,7 @@ class tone_row_permutations():
         connection = sqlite3.connect(database_name)
         cursor = connection.cursor()
         create_all_value_table = '''CREATE TABLE IF NOT EXISTS all_values (
-                    prime_row TEXT,
+                    prime_row TEXT PRIMARY KEY,
                     prime_retrograde TEXT,
                     prime_inversion TEXT,
                     prime_retrograde_inversion TEXT,
@@ -68,10 +68,10 @@ class tone_row_permutations():
                         ?,
                         ?,
                         ?)''' #11 * '?'
-        for i in range(math.factorial(tone_row_length)):
+        for i in range(math.factorial(tone_row_length-1)):
             #create object that contains all columns of linked tables
             entry = database_entry_creator.create_database_entry.all_values_entry(i)
-            
+            print(f"last row number: {i}, permutation: {entry.P0}")
             cursor.execute(insert_query, (
                 str(entry.P0),
                 str(entry.R0),
@@ -85,6 +85,7 @@ class tone_row_permutations():
                 str(entry.combinatorial_tetrachords),
                 str(entry.combinatorial_trichords)
                 ))
+            
             connection.commit()
         connection.close()
     
@@ -94,4 +95,4 @@ class tone_row_permutations():
         
 
 if __name__== "__main__":
-    tone_row_permutations.build_database("./twelve_tone_database/yo.db")
+    tone_row_permutations.build_database("./twelve_tone_database/TESTDATABASE.db")
